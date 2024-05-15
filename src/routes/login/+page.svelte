@@ -13,10 +13,10 @@
         </hgroup>
 
         <div class="block">
-            <label for="username" class="mr-3">Username</label>
+            <label for="username" class="mr-3">Mail</label>
             <input
                 class="w-56"
-                type="text"
+                type="mail"
                 id="username"
                 name="username"
                 required

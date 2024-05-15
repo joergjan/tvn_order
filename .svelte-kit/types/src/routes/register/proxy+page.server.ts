@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { auth } from "$lib/server/db/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
@@ -11,8 +12,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 */
 
-export const actions: Actions = {
-    default: async ({ request }) => {
+export const actions = {
+    default: async ({ request }: import('./$types').RequestEvent) => {
         const { username, password } = Object.fromEntries(
             await request.formData()
         ) as Record<string, string>;
@@ -34,3 +35,4 @@ export const actions: Actions = {
         throw redirect(302, "/login");
     },
 };
+;null as any as Actions;

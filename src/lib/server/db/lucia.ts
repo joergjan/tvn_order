@@ -11,11 +11,8 @@ export const auth = lucia({
     adapter: prisma(prismaClient),
     getUserAttributes: (data) => {
         return {
-            user: data.user,
             username: data.username,
-            name: data.name,
             isAdmin: data.isAdmin,
-            isEditor: data.isEditor,
         };
     },
     sessionExpiresIn: {
