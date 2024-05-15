@@ -5,7 +5,7 @@
     export let data: PageData;
 </script>
 
-<h1>Hallo {data.name}!</h1>
+<h1>Hallo {data.username.split("@")[0]}!</h1>
 
 <svelte:head>
     <title>TV Nussbaumen</title>
