@@ -8,6 +8,9 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+# assumes the default SvelteKit host and port
+ENV ORIGIN=http://localhost:3000
+
 FROM node:18-alpine AS run
 
 WORKDIR /app
