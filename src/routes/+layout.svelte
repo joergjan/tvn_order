@@ -56,21 +56,24 @@
         </a>
       </div>
       <div class="hidden md:ml-6 md:flex md:space-x-8">
-        {#if data.isAdmin}
-          <a
-            href="/admin"
-            class={"inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"}
-            >Admin</a
-          >
-        {/if}
         {#each titles as title, i}
-          <a
-            href={title.href}
-            class={$currentPage === i
-              ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
-              : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
-            on:click={() => ($currentPage = i)}>{title.name}</a
-          >
+          {#if data.isAdmin && title.admin}
+            <a
+              href={title.href}
+              class={$currentPage === i
+                ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+                : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+              on:click={() => ($currentPage = i)}>{title.name}</a
+            >
+          {:else if !title.admin}
+            <a
+              href={title.href}
+              class={$currentPage === i
+                ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+                : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+              on:click={() => ($currentPage = i)}>{title.name}</a
+            >
+          {/if}
         {/each}
       </div>
 
