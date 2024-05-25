@@ -4,14 +4,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db" //  env("DATABASE_URL") // 
 }
 
 model Table {
   id    Int     @id @default(autoincrement())
   name  String
+  order Order[]
+}
+
+model Order {
+  id    Int     @id @default(autoincrement())
+  table Table   @relation(fields: [tableId], references: [id])
+  tableId Int
   menu  Menu[]
+  user  User[]
   drink Drink[]
 }
 
@@ -19,22 +27,24 @@ model Menu {
   id      Int    @id @default(autoincrement())
   name    String
   price   Float
-  Table   Table? @relation(fields: [tableId], references: [id])
-  tableId Int?
+ order      Order?   @relation(fields: [orderId], references: [id])
+  orderId      Int?
 }
 
 model Drink {
   id      Int    @id @default(autoincrement())
   name    String
   price   Float
-  Table   Table? @relation(fields: [tableId], references: [id])
-  tableId Int?
+  order        Order?   @relation(fields: [orderId], references: [id])
+  orderId      Int?
 }
 
 model User {
   id           String    @id @unique
   username     String    @unique
   isAdmin      Boolean   @default(false)
+  order        Order?   @relation(fields: [orderId], references: [id])
+  orderId      Int?
   key          Key[]
   auth_session Session[]
 }
