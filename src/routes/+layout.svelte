@@ -32,6 +32,16 @@
       }
     }
   });
+
+  async function logout() {
+    const response = await fetch("/logout", { method: "POST" });
+
+    if (response.ok) {
+      window.location.href = "/";
+    } else {
+      console.error("Logout failed");
+    }
+  }
 </script>
 
 <nav class="sticky top-0 z-10">
@@ -75,6 +85,16 @@
             >
           {/if}
         {/each}
+        {#if data.username}
+          <div class="flex justify-center items-center mm-3">
+            <button
+              on:click={logout}
+              class="group bg-tvblue text-white py-2 px-3 hover:bg-tvbluelight rounded-md"
+            >
+              <p class="group-hover:scale-105">Logout</p></button
+            >
+          </div>
+        {/if}
       </div>
 
       <div class="-mr-2 flex items-center md:hidden gap-4">
@@ -138,6 +158,16 @@
             on:click={() => ($currentPage = i)}>{title.name}</a
           >
         {/each}
+        {#if data.username}
+          <div class="flex ml-3">
+            <button
+              on:click={logout}
+              class="group bg-tvblue text-white py-2 px-3 hover:bg-tvbluelight rounded-md"
+            >
+              <p class="group-hover:scale-105">Logout</p></button
+            >
+          </div>
+        {/if}
       </div>
       <div class="px-4 pt-5 flex space-x-10">
         <a

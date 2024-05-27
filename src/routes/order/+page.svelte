@@ -1,92 +1,97 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { enhance } from "$app/forms";
   import type { PageData } from "../$types";
-  import Order from "$lib/components/Order.svelte";
-  import { tick } from "svelte";
 
-  export let data: PageData;
-  $: ({ tables, menues, drinks } = data);
+  export let data: PageData & { users: any };
+  $: ({ tables, drinks, menues, username, myTable } = data);
 
-  function adjustHeight(event: {
-    target: { style: { height: string }; scrollHeight: number };
-  }) {
-    event.target.style.height = "auto";
-    event.target.style.height = event.target.scrollHeight + 15 + "px";
-  }
-
-  async function adjustAllTextareas() {
-    // Wait for any pending state changes to be applied
-    await tick();
-
-    const textareas = document.querySelectorAll("textarea");
-    textareas.forEach((textarea) => adjustHeight({ target: textarea }));
-  }
-
-  onMount(() => {
-    adjustAllTextareas();
-  });
+  $: myChosenTable = myTable;
+  $: orderForTable = myTable;
 </script>
 
-<svelte:head>
-  <title>Post</title>
-  <meta name="robots" content="noindex, nofollow" />
-</svelte:head>
+<div>
+  <h3>Mein Tisch</h3>
 
-<div class="mb-10">
-  <h1>Beitrag erstellen</h1>
-
-  <div class="flex items-center">
-    <a class="flex mb-3" href="/post">
-      <div class="flex mr-5 items-center group">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 group-hover:scale-110"
-          viewBox="0 -960 960 960"
-          width="24"
-          ><path
-            d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"
-          /></svg
-        >
-        <div class="pl-1 group-hover:scale-105">zurück</div>
-      </div>
-    </a>
-  </div>
-
-  <form action="?/createOrder" method="POST">
-    <div class="mb-2">
-      <label for="title">Titel</label>
-      <input type="text" name="title" id="title" required autocomplete="off" />
-    </div>
-    <div class="mb-2">
-      <label for="text">Text</label>
-      <textarea name="text" id="text" required autocomplete="off" />
-    </div>
-
-    <div class="mb-2">
-      <label for="image">Foto</label>
-      <input
-        type="file"
-        id="image"
-        name="image"
-        accept=".jpg, .jpeg, .png, .webp"
-      />
-    </div>
-
-    <div
-      class="bg-tvblue hover:bg-tvbluelight w-min rounded-md px-3 py-2 text-white group"
-    >
-      <button class="" type="submit">
-        <p class="flex group-hover:scale-105">Speichern</p></button
+  <form action="?/chooseTable" class="flex space-x-2" method="POST" use:enhance>
+    <select name="table" bind:value={myChosenTable}>
+      {#each tables ?? [] as table}
+        <option value={table.id}>{table.name}</option>
+      {/each}
+    </select>
+    <div class="place-content-end">
+      <button
+        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
+        type="submit"
       >
+        <p class="group-hover:scale-105">Speichern</p>
+      </button>
     </div>
   </form>
 </div>
 
-<style>
-  input[type="file"],
-  input[type="text"],
-  input[type="email"],
-  textarea {
-    @apply w-full;
-  }
-</style>
+<div class="pt-16">
+  <h2>Bestellung erfassen</h2>
+
+  <form action="?/createOrder" class="flex space-x-2" method="POST">
+    <div class="block">
+      <label for="table">Tisch</label>
+
+      <select name="table" bind:value={orderForTable}>
+        {#each tables ?? [] as table}
+          <option value={table.id}>{table.name}</option>
+        {/each}
+      </select>
+    </div>
+
+    <div class="block">
+      <h3>Menus</h3>
+
+      <ul class="space-y-2">
+        {#each menues ?? [] as menu, i}
+          <li class="flex">
+            <input type="number" name="id" bind:value={menu.id} hidden />
+            <p class="w-16 place-content-center">{menu.name}</p>
+            <p class="w-10 place-content-center">{menu.price}</p>
+            <input
+              type="number"
+              min="0"
+              name="menuCount{menu.id}"
+              placeholder="Anzahl"
+              inputmode="numeric"
+            />
+          </li>
+        {/each}
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Getränke</h3>
+
+      <ul class="space-y-2">
+        {#each drinks ?? [] as drink, i}
+          <li class="flex">
+            <input type="number" name="id" bind:value={drink.id} hidden />
+            <p class="w-16 place-content-center">{drink.name}</p>
+            <p class="w-10 place-content-center">{drink.price}</p>
+            <input
+              type="number"
+              min="0"
+              name="drinkCount{drink.id}"
+              placeholder="Anzahl"
+              inputmode="numeric"
+            />
+          </li>
+        {/each}
+      </ul>
+    </div>
+    <div class="place-content-end">
+      <button
+        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
+        type="submit"
+      >
+        <p class="group-hover:scale-105">Speichern</p>
+      </button>
+    </div>
+  </form>
+</div>

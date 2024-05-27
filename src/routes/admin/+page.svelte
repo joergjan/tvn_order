@@ -4,10 +4,10 @@
   import type { PageData } from "../$types";
 
   export let data: PageData & { users: any };
-  $: ({ users, tables, userId } = data);
+  $: ({ users, tables, userId, drinks, menues } = data);
 
   let updateTableForm: HTMLFormElement;
-  let updateMenueForm: HTMLFormElement;
+  let updateMenuForm: HTMLFormElement;
   let updateDrinkForm: HTMLFormElement;
   let updateUserForm: HTMLFormElement;
 </script>
@@ -17,39 +17,192 @@
 <div>
   <h2>Menu erfassen</h2>
 
-  <form action="?/createMenu" method="POST" class="w-80">
-    <input type="text" name="name" placeholder="Menuname" required />
-    <input type="number" name="price" placeholder="Preis" required />
+  <form action="?/createMenu" class="flex space-x-2" method="POST">
+    <div class="block">
+      <label for="name">Neues Menu</label>
 
-    <button
-      class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
-      type="submit"
-    >
-      <p class="group-hover:scale-105">Speichern</p>
-    </button>
+      <input type="text" name="name" />
+    </div>
+    <div class="block">
+      <label for="price">Preis</label>
+
+      <input type="number" step="0.05" name="price" />
+    </div>
+
+    <div class="place-content-end">
+      <button
+        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
+        type="submit"
+      >
+        <p class="group-hover:scale-105">Speichern</p>
+      </button>
+    </div>
   </form>
+
+  <ul class="space-y-2 pt-4">
+    {#each menues ?? [] as menu}
+      <li class="flex space-x-2 -ml-2">
+        <form
+          action="?/updateMenu"
+          method="POST"
+          class="flex space-x-2"
+          use:enhance
+          bind:this={updateMenuForm}
+        >
+          <div>
+            <input hidden type="Number" bind:value={menu.id} name="id" />
+          </div>
+          <div class="block">
+            <label for="name">Getränk</label>
+
+            <input
+              type="text"
+              bind:value={menu.name}
+              name="name"
+              on:change={() => updateMenuForm.requestSubmit()}
+            />
+          </div>
+          <div class="block">
+            <label for="price">Preis</label>
+
+            <input
+              type="number"
+              step="0.05"
+              bind:value={menu.price}
+              name="price"
+              on:change={() => updateMenuForm.requestSubmit()}
+            />
+          </div>
+        </form>
+
+        <form
+          action="?/deleteMenu"
+          class="place-content-end"
+          method="POST"
+          use:enhance
+        >
+          <input hidden type="Number" bind:value={menu.id} name="id" />
+          <button
+            class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
+            type="submit"
+          >
+            <p class="group-hover:animate-wiggle">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                class="group-hover:scale-105 fill-white"
+              >
+                <path
+                  d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                />
+              </svg>
+            </p>
+          </button>
+        </form>
+      </li>
+    {/each}
+  </ul>
 </div>
 
-<div>
+<div class="pt-16">
   <h2>Getränk erfassen</h2>
 
-  <form action="?/createMenu" method="POST" class="w-80">
-    <input type="text" name="name" placeholder="Getränkename" required />
-    <input type="number" name="price" id="price" placeholder="Preis" required />
+  <form action="?/createDrink" class="flex space-x-2" method="POST">
+    <div class="block">
+      <label for="name">Neues Getränk</label>
 
-    <button
-      class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
-      type="submit"
-    >
-      <p class="group-hover:scale-105">Speichern</p>
-    </button>
+      <input type="text" name="name" />
+    </div>
+    <div class="block">
+      <label for="price">Preis</label>
+
+      <input type="number" step="0.05" name="price" />
+    </div>
+
+    <div class="place-content-end">
+      <button
+        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
+        type="submit"
+      >
+        <p class="group-hover:scale-105">Speichern</p>
+      </button>
+    </div>
   </form>
+
+  <ul class="space-y-2 pt-4">
+    {#each drinks ?? [] as drink}
+      <li class="flex space-x-2 -ml-2">
+        <form
+          action="?/updateDrink"
+          method="POST"
+          class="flex space-x-2"
+          use:enhance
+          bind:this={updateDrinkForm}
+        >
+          <div>
+            <input hidden type="Number" bind:value={drink.id} name="id" />
+          </div>
+          <div class="block">
+            <label for="name">Getränk</label>
+
+            <input
+              type="text"
+              bind:value={drink.name}
+              name="name"
+              on:change={() => updateDrinkForm.requestSubmit()}
+            />
+          </div>
+          <div class="block">
+            <label for="price">Preis</label>
+
+            <input
+              type="number"
+              step="0.05"
+              bind:value={drink.price}
+              name="price"
+              on:change={() => updateDrinkForm.requestSubmit()}
+            />
+          </div>
+        </form>
+
+        <form
+          action="?/deleteDrink"
+          class="place-content-end"
+          method="POST"
+          use:enhance
+        >
+          <input hidden type="Number" bind:value={drink.id} name="id" />
+          <button
+            class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
+            type="submit"
+          >
+            <p class="group-hover:animate-wiggle">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                class="group-hover:scale-105 fill-white"
+              >
+                <path
+                  d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                />
+              </svg>
+            </p>
+          </button>
+        </form>
+      </li>
+    {/each}
+  </ul>
 </div>
 
-<div>
+<div class="pt-16">
   <h2>Tisch erfassen</h2>
 
-  <form action="?/createTable" method="POST" use:enhance>
+  <form action="?/createTable" class="space-y-2" method="POST" use:enhance>
+    <label for="name">Tischname</label>
     <input
       type="text"
       name="name"
@@ -65,7 +218,7 @@
     </button>
   </form>
 
-  <ul class="space-y-2">
+  <ul class="space-y-2 pt-4">
     {#each tables ?? [] as table}
       <li class="flex space-x-2">
         <form
@@ -75,6 +228,7 @@
           bind:this={updateTableForm}
         >
           <input hidden type="Number" bind:value={table.id} name="id" />
+          <label for="name">Tischname</label>
           <input
             type="text"
             bind:value={table.name}
@@ -83,7 +237,12 @@
           />
         </form>
 
-        <form action="?/deleteTable" method="POST" use:enhance>
+        <form
+          action="?/deleteTable"
+          method="POST"
+          use:enhance
+          class="place-content-end"
+        >
           <input hidden type="Number" bind:value={table.id} name="id" />
           <button
             class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
@@ -109,7 +268,7 @@
   </ul>
 </div>
 
-<div>
+<div class="pt-16">
   <h2>Benutzer verwalten</h2>
 
   <ul class="space-y-2">
@@ -170,6 +329,7 @@
   input[type="file"],
   input[type="text"],
   input[type="email"],
+  input[type="number"],
   textarea {
     @apply w-full;
   }
