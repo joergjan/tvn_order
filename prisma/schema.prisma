@@ -20,18 +20,12 @@ model Order {
   table      Table        @relation(fields: [tableId], references: [id])
   tableId    Int
   time       DateTime     @default(now())
-  status     Status?      @relation(fields: [statusId], references: [id])
-  statusId   Int?
+  status     Int          @default(1)
   user       User         @relation(fields: [userId], references: [id])
-  userId     String       @unique
+  userId     String
   MenuOrder  MenuOrder[]
   DrinkOrder DrinkOrder[]
-}
-
-model Status {
-  id    Int     @id @default(autoincrement())
-  name  String
-  order Order[]
+  paid       Boolean      @default(false)
 }
 
 model Menu {
@@ -52,8 +46,8 @@ model MenuOrder {
   menuId  Int
   orderId Int
   amount  Int
-  menu    Menu  @relation(fields: [menuId], references: [id])
-  order   Order @relation(fields: [orderId], references: [id])
+  menu    Menu  @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@id([menuId, orderId])
 }
@@ -62,8 +56,8 @@ model DrinkOrder {
   drinkId Int
   orderId Int
   amount  Int
-  drink   Drink @relation(fields: [drinkId], references: [id])
-  order   Order @relation(fields: [orderId], references: [id])
+  drink   Drink @relation(fields: [drinkId], references: [id], onDelete: Cascade)
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@id([drinkId, orderId])
 }
@@ -72,7 +66,7 @@ model User {
   id           String    @id @unique
   username     String    @unique
   isAdmin      Boolean   @default(false)
-  order        Order?
+  order        Order[]
   key          Key[]
   auth_session Session[]
   table        Table?    @relation(fields: [tableId], references: [id])

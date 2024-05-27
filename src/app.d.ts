@@ -1,6 +1,19 @@
 /// <reference types="svelte-adapter-azure-swa" />
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import {
+  User as PrismaUser,
+  Table as PrismaTable,
+  Menu as PrismaMenu,
+  Drink as PrismaDrink,
+  Order as PrismaOrder,
+  MenuOrder as PrismaMenuOrder,
+  DrinkOrder as PrismaDrinkOrder,
+  Status as PrismaStatus,
+  PaymentStatus as PrismaPaymentStatus,
+  Session as PrismaSession,
+  Key as PrismaKey,
+} from "@prisma/client";
 
 declare global {
   namespace App {
@@ -30,70 +43,17 @@ declare global {
     type DatabaseSessionAttributes = {};
   }
 
-  type Table = {
-    id: number;
-    name: string;
-    order?: Order[];
-  };
-
-  type Order = {
-    id: number;
-    table: Table;
-    tableId: number;
-    time: Date;
-    status?: Status;
-    statusId?: number;
-    menu?: Menu[];
-    user: User;
-    userId?: string;
-    drink?: Drink[];
-  };
-
-  type Status = {
-    id: number;
-    name: string;
-    order?: Order[];
-  };
-
-  type Menu = {
-    id: number;
-    name: string;
-    price: number;
-    order?: Order;
-    orderId?: number;
-  };
-
-  type Drink = {
-    id: number;
-    name: string;
-    price: number;
-    order?: Order;
-    orderId?: number;
-  };
-
-  type User = {
-    id: string;
-    username: string;
-    isAdmin: boolean;
-    order?: Order;
-    key?: Key[];
-    auth_session?: Session[];
-  };
-
-  type Session = {
-    id: string;
-    user_id: string;
-    active_expires: bigint;
-    idle_expires: bigint;
-    user: User;
-  };
-
-  type Key = {
-    id: string;
-    hashed_password?: string;
-    user_id: string;
-    user: User;
-  };
+  type User = PrismaUser;
+  type Table = PrismaTable;
+  type Menu = PrismaMenu;
+  type Drink = PrismaDrink;
+  type Order = PrismaOrder;
+  type MenuOrder = PrismaMenuOrder;
+  type DrinkOrder = PrismaDrinkOrder;
+  type Status = PrismaStatus;
+  type PaymentStatus = PrismaPaymentStatus;
+  type Session = PrismaSession;
+  type Key = PrismaKey;
 }
 
 export {};

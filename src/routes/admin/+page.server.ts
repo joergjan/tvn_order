@@ -4,7 +4,7 @@ import { prismaClient } from "$lib/server/db/prisma";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
-  if (!session?.user?.isAdmin) {
+  if (!session?.user.isAdmin) {
     throw redirect(302, "/login");
   }
 
@@ -83,11 +83,11 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    console.log(formData.isAdmin === "false");
+    const id = formData.id as string;
 
     try {
       await prismaClient.user.update({
-        where: { id: formData.id },
+        where: { id: id },
         data: {
           isAdmin: formData.isAdmin === "false",
         },
@@ -104,10 +104,11 @@ export const actions: Actions = {
     }
 
     const formData = Object.fromEntries(await request.formData());
+    const id = formData.id as string;
 
     try {
       await prismaClient.user.delete({
-        where: { id: formData.id },
+        where: { id: id },
       });
     } catch (e) {
       console.error("Failed to create new Table" + e);
@@ -223,6 +224,62 @@ export const actions: Actions = {
 
     try {
       await prismaClient.menu.delete({
+        where: { id: Number(formData.id) },
+      });
+    } catch (e) {
+      console.error("Failed to create new Table" + e);
+      return fail(500, { message: "Failed to create new Table" });
+    }
+  },
+  createStatus: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      await prismaClient.status.create({
+        data: {
+          name: (formData.name as string) || "",
+        },
+      });
+    } catch (e) {
+      console.error("Failed to create new Table" + e);
+      return fail(500, { message: "Failed to create new Table" });
+    }
+  },
+  updateStatus: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      await prismaClient.status.update({
+        where: { id: Number(formData.id) },
+        data: {
+          name: (formData.name as string) || "",
+        },
+      });
+    } catch (e) {
+      console.error("Failed to create new Table" + e);
+      return fail(500, { message: "Failed to create new Table" });
+    }
+  },
+  deleteStatus: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      await prismaClient.status.delete({
         where: { id: Number(formData.id) },
       });
     } catch (e) {

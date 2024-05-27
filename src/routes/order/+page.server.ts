@@ -38,45 +38,61 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    console.log(formData);
+    // Extract menu and drink orders from formData
+    const menuOrders = Object.keys(formData)
+      .filter((key) => key.startsWith("menuCount") && formData[key])
+      .map((key) => ({
+        menuId: key.slice(9), // remove 'menuCount' prefix to get the ID
+        amount: formData[key],
+      }));
+
+    const drinkOrders = Object.keys(formData)
+      .filter((key) => key.startsWith("drinkCount") && formData[key])
+      .map((key) => ({
+        drinkId: key.slice(10), // remove 'drinkCount' prefix to get the ID
+        amount: formData[key],
+      }));
 
     let order: Order;
 
     try {
       order = await prismaClient.order.create({
         data: {
-          tableId: Number(formData.table),
+          table: {
+            connect: {
+              id: Number(formData.table),
+            },
+          },
           user: {
             connect: {
-              id: session.user.userId,
+              id: session.user.userId as string,
             },
+          },
+          MenuOrder: {
+            create: menuOrders.map(({ menuId, amount }) => ({
+              menu: {
+                connect: {
+                  id: Number(menuId),
+                },
+              },
+              amount: Number(amount),
+            })),
+          },
+          DrinkOrder: {
+            create: drinkOrders.map(({ drinkId, amount }) => ({
+              drink: {
+                connect: {
+                  id: Number(drinkId),
+                },
+              },
+              amount: Number(amount),
+            })),
           },
         },
       });
     } catch (err) {
-      console.error("Error creating new Person:", err);
-      return fail(500, { message: "Failed to create new Person" });
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
     }
   },
 };
-
-const getMenues = async () => {
-  const menues = await prismaClient.menu.findMany({
-    include: {
-      order: true,
-    },
-  });
-  return menues;
-};
-
-const getDrinks = async () => {
-  const drinks = await prismaClient.drink.findMany({
-    include: {
-      order: true,
-    },
-  });
-  return drinks;
-};
-
-const drinks = await getDrinks();
-const menues = await getMenues();

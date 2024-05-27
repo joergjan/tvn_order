@@ -10,6 +10,7 @@
   let updateMenuForm: HTMLFormElement;
   let updateDrinkForm: HTMLFormElement;
   let updateUserForm: HTMLFormElement;
+  let updateStatusForm: HTMLFormElement;
 </script>
 
 <h1>Administration</h1>
@@ -21,12 +22,18 @@
     <div class="block">
       <label for="name">Neues Menu</label>
 
-      <input type="text" name="name" />
+      <input type="text" name="name" id="name" autocomplete="off" />
     </div>
     <div class="block">
       <label for="price">Preis</label>
 
-      <input type="number" step="0.05" name="price" />
+      <input
+        type="number"
+        step="0.05"
+        autocomplete="off"
+        name="price"
+        id="price"
+      />
     </div>
 
     <div class="place-content-end">
@@ -50,7 +57,13 @@
           bind:this={updateMenuForm}
         >
           <div>
-            <input hidden type="Number" bind:value={menu.id} name="id" />
+            <input
+              hidden
+              type="Number"
+              bind:value={menu.id}
+              name="id"
+              autocomplete="off"
+            />
           </div>
           <div class="block">
             <label for="name">Getränk</label>
@@ -59,6 +72,8 @@
               type="text"
               bind:value={menu.name}
               name="name"
+              autocomplete="off"
+              id="name"
               on:change={() => updateMenuForm.requestSubmit()}
             />
           </div>
@@ -70,6 +85,8 @@
               step="0.05"
               bind:value={menu.price}
               name="price"
+              autocomplete="off"
+              id="price"
               on:change={() => updateMenuForm.requestSubmit()}
             />
           </div>
@@ -81,7 +98,13 @@
           method="POST"
           use:enhance
         >
-          <input hidden type="Number" bind:value={menu.id} name="id" />
+          <input
+            hidden
+            type="Number"
+            bind:value={menu.id}
+            name="id"
+            autocomplete="off"
+          />
           <button
             class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
             type="submit"
@@ -113,12 +136,12 @@
     <div class="block">
       <label for="name">Neues Getränk</label>
 
-      <input type="text" name="name" />
+      <input type="text" name="name" id="name" autocomplete="off" />
     </div>
     <div class="block">
       <label for="price">Preis</label>
 
-      <input type="number" step="0.05" name="price" />
+      <input type="number" step="0.05" name="price" autocomplete="off" />
     </div>
 
     <div class="place-content-end">
@@ -142,7 +165,13 @@
           bind:this={updateDrinkForm}
         >
           <div>
-            <input hidden type="Number" bind:value={drink.id} name="id" />
+            <input
+              hidden
+              type="Number"
+              bind:value={drink.id}
+              name="id"
+              autocomplete="off"
+            />
           </div>
           <div class="block">
             <label for="name">Getränk</label>
@@ -151,6 +180,7 @@
               type="text"
               bind:value={drink.name}
               name="name"
+              autocomplete="off"
               on:change={() => updateDrinkForm.requestSubmit()}
             />
           </div>
@@ -159,6 +189,7 @@
 
             <input
               type="number"
+              autocomplete="off"
               step="0.05"
               bind:value={drink.price}
               name="price"
@@ -173,7 +204,13 @@
           method="POST"
           use:enhance
         >
-          <input hidden type="Number" bind:value={drink.id} name="id" />
+          <input
+            hidden
+            type="Number"
+            bind:value={drink.id}
+            name="id"
+            autocomplete="off"
+          />
           <button
             class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
             type="submit"
@@ -206,6 +243,7 @@
     <input
       type="text"
       name="name"
+      autocomplete="off"
       placeholder="Namen für Tisch eingeben"
       required
     />
@@ -230,6 +268,7 @@
           <input hidden type="Number" bind:value={table.id} name="id" />
           <label for="name">Tischname</label>
           <input
+            autocomplete="off"
             type="text"
             bind:value={table.name}
             name="name"
@@ -243,7 +282,13 @@
           use:enhance
           class="place-content-end"
         >
-          <input hidden type="Number" bind:value={table.id} name="id" />
+          <input
+            hidden
+            type="Number"
+            autocomplete="off"
+            bind:value={table.id}
+            name="id"
+          />
           <button
             class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
             type="submit"
@@ -274,61 +319,68 @@
   <ul class="space-y-2">
     {#each users ?? [] as user}
       <li class="flex space-x-2">
-        {#if user.id != userId}
-          <form
-            action="?/updateUser"
-            method="POST"
-            use:enhance
-            bind:this={updateUserForm}
-          >
-            <p>{user.username}</p>
-            <p>{user.isAdmin}</p>
-            <input hidden type="text" bind:value={user.id} name="id" />
-            <input
-              type="checkbox"
-              name="isAdmin"
-              bind:checked={user.isAdmin}
-              bind:value={user.isAdmin}
-              on:change={() => {
-                console.log(user.isAdmin);
-                updateUserForm.requestSubmit();
-              }}
-            />
-          </form>
+        <form
+          action="?/updateUser"
+          method="POST"
+          use:enhance
+          bind:this={updateUserForm}
+        >
+          <p>{user.username}</p>
+          <p>{user.isAdmin}</p>
+          <input
+            hidden
+            type="text"
+            autocomplete="off"
+            bind:value={user.id}
+            name="id"
+          />
+          <input
+            type="checkbox"
+            name="isAdmin"
+            autocomplete="off"
+            bind:checked={user.isAdmin}
+            bind:value={user.isAdmin}
+            on:change={() => {
+              console.log(user.isAdmin);
+              updateUserForm.requestSubmit();
+            }}
+          />
+        </form>
 
-          <form action="?/deleteTable" method="POST" use:enhance>
-            <input hidden type="text" bind:value={user.id} name="id" />
-            <button
-              class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
-              type="submit"
-            >
-              <p class="group-hover:animate-wiggle">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  class="group-hover:scale-105 fill-white"
-                >
-                  <path
-                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
-                  />
-                </svg>
-              </p>
-            </button>
-          </form>
-        {:else}
-          {user.username}
-        {/if}
+        <form action="?/deleteUser" method="POST" use:enhance>
+          <input
+            hidden
+            type="text"
+            bind:value={user.id}
+            name="id"
+            autocomplete="off"
+          />
+          <button
+            class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
+            type="submit"
+          >
+            <p class="group-hover:animate-wiggle">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                class="group-hover:scale-105 fill-white"
+              >
+                <path
+                  d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                />
+              </svg>
+            </p>
+          </button>
+        </form>
       </li>
     {/each}
   </ul>
 </div>
 
 <style>
-  input[type="file"],
   input[type="text"],
-  input[type="email"],
   input[type="number"],
   textarea {
     @apply w-full;

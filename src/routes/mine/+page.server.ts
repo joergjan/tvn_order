@@ -8,6 +8,92 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw redirect(302, "/login");
   }
 
+  const paid: Order[] = await prismaClient.order.findMany({
+    include: {
+      table: {
+        select: {
+          name: true,
+        },
+      },
+      MenuOrder: {
+        select: {
+          amount: true,
+          menu: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      DrinkOrder: {
+        select: {
+          amount: true,
+          drink: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+    where: {
+      paid: true,
+      user: {
+        id: session.user.userId,
+      },
+    },
+  });
+
+  const unpaid: Order[] = await prismaClient.order.findMany({
+    include: {
+      table: {
+        select: {
+          name: true,
+        },
+      },
+      MenuOrder: {
+        select: {
+          amount: true,
+          menu: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      DrinkOrder: {
+        select: {
+          amount: true,
+          drink: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+    where: {
+      paid: false,
+      user: {
+        id: session.user.userId,
+      },
+    },
+  });
+
   const newOrders: Order[] = await prismaClient.order.findMany({
     include: {
       table: {
@@ -45,6 +131,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     },
     where: {
       status: 1,
+      user: {
+        id: session.user.userId,
+      },
     },
   });
 
@@ -85,12 +174,62 @@ export const load: PageServerLoad = async ({ locals }) => {
     },
     where: {
       status: 2,
+      user: {
+        id: session.user.userId,
+      },
+    },
+  });
+
+  const served: Order[] = await prismaClient.order.findMany({
+    include: {
+      table: {
+        select: {
+          name: true,
+        },
+      },
+      MenuOrder: {
+        select: {
+          amount: true,
+          menu: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      DrinkOrder: {
+        select: {
+          amount: true,
+          drink: {
+            select: {
+              name: true,
+              price: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+    where: {
+      status: 3,
+      paid: false,
+      user: {
+        id: session.user.userId,
+      },
     },
   });
 
   return {
+    paid: paid,
+    unpaid: unpaid,
+    newOrder: newOrders,
     ready: ready,
-    newOrders: newOrders,
+    served: served,
   };
 };
 
