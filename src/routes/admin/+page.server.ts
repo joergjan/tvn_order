@@ -4,9 +4,12 @@ import { prismaClient } from "$lib/server/db/prisma";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
+
+  /*
   if (!session?.user.isAdmin) {
     throw redirect(302, "/login");
-  }
+  } 
+ */
 
   const getUsers = async () => {
     const users: User[] = await prismaClient.user.findMany({});
@@ -224,62 +227,6 @@ export const actions: Actions = {
 
     try {
       await prismaClient.menu.delete({
-        where: { id: Number(formData.id) },
-      });
-    } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
-    }
-  },
-  createStatus: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.status.create({
-        data: {
-          name: (formData.name as string) || "",
-        },
-      });
-    } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
-    }
-  },
-  updateStatus: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.status.update({
-        where: { id: Number(formData.id) },
-        data: {
-          name: (formData.name as string) || "",
-        },
-      });
-    } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
-    }
-  },
-  deleteStatus: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.status.delete({
         where: { id: Number(formData.id) },
       });
     } catch (e) {

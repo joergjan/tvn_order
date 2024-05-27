@@ -3,14 +3,25 @@
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
   import Order from "$lib/components/Order.svelte";
+  import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { orders: any };
   $: ({ paid, unpaid, newOrder, ready, served } = data);
 
   let viewPaid = true;
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      invalidateAll();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 </script>
 
-<h2>Bestellungen</h2>
+<h2>Meine Bestellungen</h2>
 
 <div>
   <button
