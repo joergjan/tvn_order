@@ -18,7 +18,7 @@
 <div>
   <h2>Menu erfassen</h2>
 
-  <form action="?/createMenu" class="flex space-x-2" method="POST">
+  <form action="?/createMenu" class="flex space-x-2" method="POST"  use:enhance>
     <div class="block">
       <label for="name">Neues Menu</label>
 
@@ -132,7 +132,7 @@
 <div class="pt-16">
   <h2>Getränk erfassen</h2>
 
-  <form action="?/createDrink" class="flex space-x-2" method="POST">
+  <form action="?/createDrink" class="flex space-x-2" method="POST" use:enhance>
     <div class="block">
       <label for="name">Neues Getränk</label>
 

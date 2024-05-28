@@ -50,11 +50,8 @@
       // calling `cancel()` will prevent the submission
       // `submitter` is the `HTMLElement` that caused the form to be submitted
 
-      loading = true;
-
       return async ({ result, update }) => {
-        console.log(result);
-
+      
         loading = false;
         if (result.type === "success") {
           formElement.reset();
@@ -123,7 +120,7 @@
                 <input
                   type="number"
                   min="0"
-                  name="menuCount{drink.id}"
+                  name="drinkCount{drink.id}"
                   placeholder="Anzahl"
                   class="w-full max-w-full md:max-w-44"
                 />
