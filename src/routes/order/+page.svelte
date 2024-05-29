@@ -14,6 +14,29 @@
   let loading = false;
   let showError = false;
   let showSuccess = false;
+
+  $: menuCounter = Array(menues?.length).fill(0);
+  $: drinkCounter = Array(drinks?.length).fill(0);
+
+  function increment(index: number, menu: boolean) {
+    if (menu) {
+      menuCounter[index]++;
+    } else {
+      drinkCounter[index]++;
+    }
+  }
+
+  function decrement(index: number, menu: boolean) {
+    if (menu) {
+      if (menuCounter[index] > 0) {
+        menuCounter[index]--;
+      }
+    } else {
+      if (drinkCounter[index] > 0) {
+        drinkCounter[index]--;
+      }
+    }
+  }
 </script>
 
 <div>
@@ -49,13 +72,17 @@
       // `action` is the URL to which the form is posted
       // calling `cancel()` will prevent the submission
       // `submitter` is the `HTMLElement` that caused the form to be submitted
+      loading = true;
 
       return async ({ result, update }) => {
-      
         loading = false;
         if (result.type === "success") {
           formElement.reset();
           showSuccess = true;
+          menuCounter.fill(0);
+          menuCounter = menuCounter;
+          drinkCounter.fill(0);
+          drinkCounter = drinkCounter;
           setTimeout(() => {
             showSuccess = false;
           }, 3500);
@@ -78,6 +105,10 @@
         {/each}
       </select>
     </div>
+
+    <div class="pt-3">
+      <input type="text" id="name" name="name" placeholder="Name (optional)" />
+    </div>
     <div class="grid md:grid-cols-2">
       <div class="mt-8">
         <h3>Menus</h3>
@@ -90,15 +121,66 @@
                 <p class="w-32 place-content-center">{menu.name}</p>
                 <p class="w-10 place-content-center">{menu.price}</p>
               </div>
-              <div>
-                <input
-                  type="number"
-                  min="0"
-                  name="menuCount{menu.id}"
-                  placeholder="Anzahl"
-                  inputmode="numeric"
-                  class="w-full max-w-full md:max-w-44"
-                />
+
+              <div class="grid grid-cols-3 items-center content-center">
+                <div>
+                  <p>{menuCounter[i]}</p>
+
+                  <input
+                    type="number"
+                    hidden
+                    min="0"
+                    bind:value={menuCounter[i]}
+                    name="menuCount{menu.id}"
+                  />
+                </div>
+                <div class="pr-4 items-center justify-center flex">
+                  <button
+                    on:click={() => {
+                      decrement(i, true);
+                    }}
+                    class="p-1 border rounded-full {menuCounter[i] > 0
+                      ? 'hover:bg-gray-200'
+                      : ''} transition-all duration-200"
+                    disabled={menuCounter[i] === 0}
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      class={menuCounter[i] === 0
+                        ? "fill-gray-200"
+                        : "fill-black"}
+                    >
+                      <path d="M200-440v-80h560v80H200Z" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="items-center justify-center flex">
+                  <button
+                    class="p-1 border rounded-full {menuCounter[i] > 0
+                      ? 'hover:bg-gray-200'
+                      : ''} transition-all duration-200"
+                    on:click={() => {
+                      increment(i, true);
+                    }}
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      class="fill-black"
+                    >
+                      <path
+                        d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </li>
           {/each}
@@ -116,14 +198,65 @@
                 <p class="w-32 place-content-center">{drink.name}</p>
                 <p class="w-10 place-content-center">{drink.price}</p>
               </div>
-              <div class="">
-                <input
-                  type="number"
-                  min="0"
-                  name="drinkCount{drink.id}"
-                  placeholder="Anzahl"
-                  class="w-full max-w-full md:max-w-44"
-                />
+              <div class="grid grid-cols-3">
+                <div>
+                  <p>{drinkCounter[i]}</p>
+
+                  <input
+                    type="number"
+                    hidden
+                    min="0"
+                    bind:value={drinkCounter[i]}
+                    name="drinkCount{drink.id}"
+                  />
+                </div>
+                <div class="pr-4 items-center justify-center flex">
+                  <button
+                    on:click={() => {
+                      decrement(i, false);
+                    }}
+                    class="p-1 border rounded-full {drinkCounter[i] > 0
+                      ? 'hover:bg-gray-200'
+                      : ''} transition-all duration-200"
+                    disabled={drinkCounter[i] === 0}
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      class={drinkCounter[i] === 0
+                        ? "fill-gray-200"
+                        : "fill-black"}
+                    >
+                      <path d="M200-440v-80h560v80H200Z" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="items-center justify-center flex">
+                  <button
+                    on:click={() => {
+                      increment(i, false);
+                    }}
+                    class="p-1 border rounded-full {drinkCounter[i] > 0
+                      ? 'hover:bg-gray-200'
+                      : ''} transition-all duration-200"
+                    type="button"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      class="fill-black"
+                    >
+                      <path
+                        d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </li>
           {/each}

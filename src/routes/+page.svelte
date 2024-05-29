@@ -11,7 +11,7 @@
   onMount(() => {
     const interval = setInterval(() => {
       invalidateAll();
-    }, 1000);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
@@ -21,7 +21,7 @@
 
 <h2>Bestellungen</h2>
 
-<div class="grid md:grid-cols-2 md:space-x-3">
+<div class="grid sm:grid-cols-2 sm:space-x-3">
   <ul>
     <h3>Bestellt</h3>
     {#each newOrders as order}

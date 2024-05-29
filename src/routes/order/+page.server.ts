@@ -58,6 +58,7 @@ export const actions: Actions = {
     try {
       order = await prismaClient.order.create({
         data: {
+          name: formData.name as string,
           table: {
             connect: {
               id: Number(formData.table),

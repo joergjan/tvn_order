@@ -43,6 +43,7 @@
     <p>{order.user.username}</p>
   </div>
   <h3>{order.table.name}</h3>
+  <h4>für {order.name}</h4>
   <ul class="lg:flex lg:space-x-20 lg:space-y-0 space-y-10">
     <li class="w-48">
       <div class="flex justify-between">

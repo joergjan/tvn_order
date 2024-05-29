@@ -13,7 +13,7 @@
   onMount(() => {
     const interval = setInterval(() => {
       invalidateAll();
-    }, 1000);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
@@ -35,7 +35,7 @@
 </div>
 <div class="m-5"></div>
 
-<div class="grid md:grid-cols-2 md:space-x-3">
+<div class="grid sm:grid-cols-2 sm:space-x-3">
   <ul>
     <h3>{viewPaid ? "Nicht bezahlt" : "Bestellt"}</h3>
     {#each viewPaid ? unpaid : newOrder as order}
