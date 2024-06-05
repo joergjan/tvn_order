@@ -7,95 +7,10 @@ export const load: PageServerLoad = async ({ locals }) => {
   if (!session) {
     throw redirect(302, "/login");
   }
-
-  const newOrders: Order[] = await prismaClient.order.findMany({
-    include: {
-      table: {
-        select: {
-          name: true,
-        },
-      },
-      MenuOrder: {
-        select: {
-          amount: true,
-          menu: {
-            select: {
-              name: true,
-              price: true,
-            },
-          },
-        },
-      },
-      DrinkOrder: {
-        select: {
-          amount: true,
-          drink: {
-            select: {
-              name: true,
-              price: true,
-            },
-          },
-        },
-      },
-      user: {
-        select: {
-          username: true,
-        },
-      },
-    },
-    where: {
-      status: 1,
-    },
-  });
-
-  const ready: Order[] = await prismaClient.order.findMany({
-    include: {
-      table: {
-        select: {
-          name: true,
-        },
-      },
-      MenuOrder: {
-        select: {
-          amount: true,
-          menu: {
-            select: {
-              name: true,
-              price: true,
-            },
-          },
-        },
-      },
-      DrinkOrder: {
-        select: {
-          amount: true,
-          drink: {
-            select: {
-              name: true,
-              price: true,
-            },
-          },
-        },
-      },
-      user: {
-        select: {
-          username: true,
-        },
-      },
-    },
-    where: {
-      status: 2,
-    },
-  });
-
-  return {
-    ready: ready,
-    newOrders: newOrders,
-  };
 };
 
 export const actions: Actions = {
-  deleteOrder: async ({ request, locals }) => {
+  chooseTable: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -104,35 +19,18 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.order.delete({
-        where: { id: Number(formData.id) },
-      });
-    } catch (err) {
-      console.error("Error deleting order", err);
-      return fail(500, { message: "Failed to delete order" });
-    }
-  },
-  changeStatusToReady: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.order.update({
-        where: { id: Number(formData.id) },
+      await prismaClient.user.update({
+        where: { id: session.user.userId },
         data: {
-          status: 2,
+          tableId: Number(formData.table),
         },
       });
     } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
+      console.error("Error creating new Person:", err);
+      return fail(500, { message: "Failed to create new Person" });
     }
   },
-  changeStatusToServed: async ({ request, locals }) => {
+  createOrder: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -140,36 +38,72 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
+    // Extract menu and drink orders from formData
+    const menuOrders = Object.keys(formData)
+      .filter((key) => key.startsWith("menuCount") && Number(formData[key]) > 0)
+      .map((key) => ({
+        menuId: key.slice(9), // remove 'menuCount' prefix to get the ID
+        amount: formData[key],
+      }));
+
+    const drinkOrders = Object.keys(formData)
+      .filter(
+        (key) => key.startsWith("drinkCount") && Number(formData[key]) > 0
+      )
+      .map((key) => ({
+        drinkId: key.slice(10), // remove 'drinkCount' prefix to get the ID
+        amount: formData[key],
+      }));
+
+    let order: Order;
+
     try {
-      await prismaClient.order.update({
-        where: { id: Number(formData.id) },
+      order = await prismaClient.order.create({
         data: {
-          status: 3,
+          name: (formData.name as string) || "",
+          table: {
+            connect: {
+              id: Number(formData.table),
+            },
+          },
+          user: {
+            connect: {
+              id: session.user.userId as string,
+            },
+          },
+          orderedMenus: {
+            create: {
+              menuOrder: {
+                create: menuOrders.map(({ menuId, amount }) => ({
+                  menu: {
+                    connect: {
+                      id: Number(menuId),
+                    },
+                  },
+                  amount: Number(amount),
+                })),
+              },
+            },
+          },
+          orderedDrinks: {
+            create: {
+              drinkOrder: {
+                create: drinkOrders.map(({ drinkId, amount }) => ({
+                  drink: {
+                    connect: {
+                      id: Number(drinkId),
+                    },
+                  },
+                  amount: Number(amount),
+                })),
+              },
+            },
+          },
         },
       });
     } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
-    }
-  },
-  updatePaymentStatus: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.order.update({
-        where: { id: Number(formData.id) },
-        data: {
-          paid: true,
-        },
-      });
-    } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
     }
   },
 };

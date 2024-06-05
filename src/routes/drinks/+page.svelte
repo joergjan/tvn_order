@@ -1,14 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { enhance } from "$app/forms";
-  import type { PageData } from "./$types";
+  import type { PageData } from "../$types";
   import Order from "$lib/components/Order.svelte";
   import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { orders: any };
-  $: ({ paid, unpaid, newOrder, ready, served } = data);
-
-  let viewPaid = true;
+  $: ({ newOrders, ready } = data);
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -19,37 +17,39 @@
       clearInterval(interval);
     };
   });
+
+  let loading = false;
 </script>
 
-<h2>Meine Bestellungen</h2>
-
-<div>
-  <button
-    class="px-3 py-2 rounded-md bg-tvbluelight hover:bg-tvblue group text-white"
-    on:click={() => {
-      viewPaid = !viewPaid;
-    }}
-  >
-    <p class="group-hover:scale-105">Ansicht wechseln</p>
-  </button>
-</div>
-<div class="m-5"></div>
+<h2>Bestellte Getränke</h2>
 
 <div class="grid sm:grid-cols-2 sm:space-x-3">
   <ul>
-    <h3>{viewPaid ? "Nicht bezahlt" : "Bestellt"}</h3>
-    {#each viewPaid ? unpaid : newOrder as order}
+    <h3>Bestellt</h3>
+    {#each newOrders as order}
       <li>
-        <Order {order} />
+        <Order {order} showMenuOrDrink="drink" />
 
         <div class="flex space-x-2">
-          {#if order.status === 1}
+          {#if order.orderedDrinks.status === 1}
             <div class="">
-              <form action="?/changeStatusToReady" method="POST" use:enhance>
+              <form
+                action="?/changeStatusToReady"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -61,13 +61,25 @@
                 </button>
               </form>
             </div>
-          {:else if order.status === 2}
+          {:else if order.orderedDrinks.status === 2}
             <div class="">
-              <form action="?/changeStatusToServed" method="POST" use:enhance>
+              <form
+                action="?/changeStatusToServed"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -80,13 +92,25 @@
               </form>
             </div>
           {/if}
-          {#if !order.paid}
+          {#if !order.orderedDrinks.paid}
             <div class="">
-              <form action="?/updatePaymentStatus" method="POST" use:enhance>
+              <form
+                action="?/updatePaymentStatus"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -100,11 +124,23 @@
             </div>
           {/if}
           <div>
-            <form action="?/deleteOrder" method="POST" use:enhance>
+            <form
+              action="?/deleteOrder"
+              method="POST"
+              use:enhance={({}) => {
+                loading = true;
+                return async ({ result }) => {
+                  await invalidateAll();
+                  if (result.type === "success") {
+                    loading = false;
+                  }
+                };
+              }}
+            >
               <input
                 hidden
                 type="number"
-                bind:value={order.id}
+                bind:value={order.orderedDrinks.id}
                 name="id"
                 autocomplete="off"
               />
@@ -134,19 +170,32 @@
   </ul>
 
   <ul>
-    <h3>{viewPaid ? "Bezahlt" : "Bereit"}</h3>
-    {#each viewPaid ? paid : ready as order}
+    <h3>Bereit</h3>
+
+    {#each ready as order}
       <li>
-        <Order {order} />
+        <Order {order} showMenuOrDrink="drink" />
 
         <div class="flex space-x-2">
-          {#if order.status === 1}
+          {#if order.orderedDrinks.status === 1}
             <div class="">
-              <form action="?/changeStatus" method="POST" use:enhance>
+              <form
+                action="?/changeStatus"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -158,13 +207,25 @@
                 </button>
               </form>
             </div>
-          {:else if order.status === 2}
+          {:else if order.orderedDrinks.status === 2}
             <div class="">
-              <form action="?/changeStatusToServed" method="POST" use:enhance>
+              <form
+                action="?/changeStatusToServed"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -177,13 +238,25 @@
               </form>
             </div>
           {/if}
-          {#if !order.paid}
+          {#if !order.orderedDrinks.paid}
             <div class="">
-              <form action="?/updatePaymentStatus" method="POST" use:enhance>
+              <form
+                action="?/updatePaymentStatus"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+                  return async ({ result }) => {
+                    await invalidateAll();
+                    if (result.type === "success") {
+                      loading = false;
+                    }
+                  };
+                }}
+              >
                 <input
                   hidden
                   type="text"
-                  bind:value={order.id}
+                  bind:value={order.orderedDrinks.id}
                   name="id"
                   autocomplete="off"
                 />
@@ -197,7 +270,19 @@
             </div>
           {/if}
           <div>
-            <form action="?/deleteOrder" method="POST" use:enhance>
+            <form
+              action="?/deleteOrder"
+              method="POST"
+              use:enhance={({}) => {
+                loading = true;
+                return async ({ result }) => {
+                  await invalidateAll();
+                  if (result.type === "success") {
+                    loading = false;
+                  }
+                };
+              }}
+            >
               <input
                 hidden
                 type="number"
@@ -229,109 +314,33 @@
       </li>
     {/each}
   </ul>
-
-  <ul class="mt-5">
-    {#if served.length > 0 && !viewPaid}
-      <h3>Serviert, unbezahlt</h3>
-      {#each served as order}
-        <li>
-          <Order {order} />
-
-          <div class="flex space-x-2">
-            {#if order.status === 1}
-              <div class="">
-                <form action="?/changeStatusToReady" method="POST" use:enhance>
-                  <input
-                    hidden
-                    type="text"
-                    bind:value={order.id}
-                    name="id"
-                    autocomplete="off"
-                  />
-                  <button
-                    class="group py-2 px-3 rounded-md text-white bg-blue-500 hover:bg-blue-600"
-                    type="submit"
-                  >
-                    als bereit markieren
-                  </button>
-                </form>
-              </div>
-            {:else if order.status === 2}
-              <div class="">
-                <form action="?/changeStatusToServed" method="POST" use:enhance>
-                  <input
-                    hidden
-                    type="text"
-                    bind:value={order.id}
-                    name="id"
-                    autocomplete="off"
-                  />
-                  <button
-                    class="group py-2 px-3 rounded-md text-white bg-blue-500 hover:bg-blue-600"
-                    type="submit"
-                  >
-                    als serviert markieren
-                  </button>
-                </form>
-              </div>
-            {/if}
-            {#if !order.paid}
-              <div class="">
-                <form action="?/updatePaymentStatus" method="POST" use:enhance>
-                  <input
-                    hidden
-                    type="text"
-                    bind:value={order.id}
-                    name="id"
-                    autocomplete="off"
-                  />
-                  <button
-                    class="group py-2 px-3 rounded-md text-white bg-green-500 hover:bg-green-600"
-                    type="submit"
-                  >
-                    als bezahlt markieren
-                  </button>
-                </form>
-              </div>
-            {/if}
-            <div>
-              <form action="?/deleteOrder" method="POST" use:enhance>
-                <input
-                  hidden
-                  type="number"
-                  bind:value={order.id}
-                  name="id"
-                  autocomplete="off"
-                />
-                <button
-                  class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
-                  type="submit"
-                >
-                  <p class="group-hover:animate-wiggle">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      class="group-hover:scale-105 fill-white"
-                    >
-                      <path
-                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
-                      />
-                    </svg>
-                  </p>
-                </button>
-              </form>
-            </div>
-          </div>
-        </li>
-      {/each}
-    {/if}
-  </ul>
 </div>
+
+{#if loading}
+  <div
+    class="fixed top-0 bottom-0 right-0 left-0 bg-black bg-opacity-60 w-full h-full flex items-center justify-center z-50"
+  >
+    <div class="spinner"></div>
+  </div>
+{/if}
 
 <style>
   li {
     @apply my-5 rounded-md p-2 bg-gray-300;
+  }
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: white;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>

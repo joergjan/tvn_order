@@ -9,6 +9,8 @@ import {
   Order as PrismaOrder,
   MenuOrder as PrismaMenuOrder,
   DrinkOrder as PrismaDrinkOrder,
+  OrderedDrinks as PrismaOrderedDrinks,
+  OrderedMenues as PrismaOrderedMenues,
   Status as PrismaStatus,
   PaymentStatus as PrismaPaymentStatus,
   Session as PrismaSession,

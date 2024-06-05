@@ -146,6 +146,8 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
+    console.log(formData);
+
     try {
       await prismaClient.drink.update({
         where: { id: Number(formData.id) },
@@ -213,8 +215,8 @@ export const actions: Actions = {
         },
       });
     } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      console.error("Failed to update drink" + e);
+      return fail(500, { message: "Failed to update drink" });
     }
   },
   deleteMenu: async ({ request, locals }) => {

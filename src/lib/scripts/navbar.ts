@@ -1,6 +1,6 @@
 export const titles = [
-  { name: "Offen", href: "/", admin: false },
-  { name: "Bestellen", href: "/order", admin: false },
-  { name: "Meine Bestellungen", href: "/mine", admin: false },
+  { name: "Bestellen", href: "/", admin: false },
+  { name: "Getränke", href: "/drinks", admin: false },
+  { name: "Menus", href: "/menus", admin: false },
   { name: "Admin", href: "/admin", admin: true },
 ];
