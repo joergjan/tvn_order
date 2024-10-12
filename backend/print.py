@@ -2,14 +2,38 @@ from escpos.printer import Network
 import asyncio
 from prisma import Prisma
 from datetime import datetime, timedelta
+import time
+from ping3 import ping
 
 
-async def print_orders(prisma, receipt):
-    three_minutes_ago = datetime.utcnow() - timedelta(minutes=0)
+async def print_orders(prisma):
+    try:
+        # Ping the printer to check if it's reachable
+        response = ping("192.168.1.148", timeout=2)
+        if response is None:
+            raise Exception("Printer not reachable")
+
+        receipt = Network("192.168.1.148", profile='TM-T20II')
+        # Check if the printer is available by sending a simple command
+
+    except Exception as e:
+        if not prisma.is_connected():
+            await prisma.connect()
+        await prisma.error.create(
+            data={"message": "Drucker nicht gefunden"}
+        )
+        return
 
     # Ensure the Prisma client is connected
     if not prisma.is_connected():
         await prisma.connect()
+
+    await prisma.error.update_many(
+        where={"solved": False},
+        data={"solved": True}
+    )
+
+    three_minutes_ago = datetime.utcnow() - timedelta(minutes=3)
 
     # Fetch orders where printed is false
     orders = await prisma.order.find_many(
@@ -122,21 +146,23 @@ async def print_orders(prisma, receipt):
     except Exception as e:
         print(e)
 
-    await prisma.disconnect()
-
 
 async def main() -> None:
     prisma = Prisma()
     await prisma.connect()
-    receipt = Network("192.168.1.148", profile='TM-T20II')
 
     try:
         while True:
-            await print_orders(prisma, receipt)
+            await print_orders(prisma)
             await asyncio.sleep(5)
     finally:
         await prisma.disconnect()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    while True:
+        try:
+            asyncio.run(main())
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            time.sleep(5)

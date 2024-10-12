@@ -1,4 +1,4 @@
-import type { LayoutServerLoad } from "./$types";
+import type { Actions, LayoutServerLoad } from "./$types";
 import { prismaClient } from "$lib/server/db/prisma";
 
 export const load: LayoutServerLoad = async ({ locals }) => {

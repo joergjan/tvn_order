@@ -76,8 +76,8 @@
     }}
   >
     <div class="">
-      <label for="table">Für</label>
-      <select name="table" bind:value={orderForTable}>
+      <label for="table">Für Tisch </label>
+      <select name="table" bind:value={orderForTable} required>
         {#each tables ?? [] as table}
           <option value={table.id}>{table.name}</option>
         {/each}

@@ -2,9 +2,11 @@
   import "../app.css";
   import { currentPage } from "$lib/scripts/stores";
   import { titles } from "$lib/scripts/navbar";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
   import type { LayoutData } from "./$types";
   import { onMount } from "svelte";
+  import { error } from "$lib/scripts/stores";
+  import Actions from "./Actions.svelte";
 
   export let data: LayoutData;
   let open = false;
@@ -43,6 +45,20 @@
     }
   }
 </script>
+
+{#if $error}
+  <div transition:slide>
+    <div
+      class="bg-red-500 border text-white px-4 py-3 z-50 text-center"
+      role="alert"
+    >
+      <strong class="font-bold">Fehler!</strong>
+      <span class="block sm:inline">{$error.message}</span>
+    </div>
+  </div>
+{/if}
+
+<Actions />
 
 <nav class="sticky top-0 z-10">
   <div

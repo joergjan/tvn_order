@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:dev.db" //  env("DATABASE_URL") // 
+  url      = "file:../../db/dev.db" //  env("DATABASE_URL") // 
 }
 
 //datasource db {
@@ -97,6 +97,13 @@ model User {
   auth_session Session[]
   table        Table?    @relation(fields: [tableId], references: [id])
   tableId      Int?
+}
+
+model Error {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now())
+  solved    Boolean  @default(false)
 }
 
 model Session {
