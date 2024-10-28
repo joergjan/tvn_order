@@ -21,12 +21,12 @@ run_sudo_command_background() {
 }
 
 # Example usage
-run_sudo_command 'cd frontend && npm install && sleep 10'
-run_sudo_command 'cd frontend && npm run build && sleep 10'
+run_sudo_command 'cd frontend && npm install && sleep 2'
+run_sudo_command 'cd frontend && npm run build && sleep 2'
 run_sudo_command 'rm -rf app/* && cp -r frontend/build app/'
 run_sudo_command 'cp frontend/package.json app/'
 run_sudo_command 'cp frontend/package-lock.json app/'
-run_sudo_command 'cp -r frontend/prisma app/ && sleep 10'
+run_sudo_command 'cp -r frontend/prisma app/ && sleep 2'
 run_sudo_command 'cd app && npm ci --omit dev'
-run_sudo_command_background 'cd app && ORIGIN=http://localhost:3000 node build'
-run_sudo_command_background 'cd backend && print.sh'
+run_sudo_command_background 'cd app && ORIGIN=http://localhost:3000 node build' "node build"
+run_sudo_command_background 'cd backend && print.sh' "print.sh"
