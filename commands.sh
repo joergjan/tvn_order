@@ -28,5 +28,5 @@ run_sudo_command 'cp frontend/package.json app/'
 run_sudo_command 'cp frontend/package-lock.json app/'
 run_sudo_command 'cp -r frontend/prisma app/ && sleep 2'
 run_sudo_command 'cd app && npm ci --omit dev'
-run_sudo_command_background 'cd app && ORIGIN=http://localhost:3000 node build' "node build"
+run_sudo_command_background 'cd app && ORIGIN=http://tvn.local node build' "node build"
 run_sudo_command_background 'cd backend && print.sh' "print.sh"
