@@ -167,6 +167,7 @@
               autocomplete="off"
             />
             <button
+              aria-label="delete-menu"
               class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
               type="submit"
             >
@@ -280,6 +281,7 @@
               autocomplete="off"
             />
             <button
+              aria-label="delete-drink"
               class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
               type="submit"
             >
@@ -358,6 +360,7 @@
               name="id"
             />
             <button
+              aria-label="delete-table"
               class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
               type="submit"
             >
@@ -432,6 +435,7 @@
                 autocomplete="off"
               />
               <button
+                aria-label="delete-user"
                 class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
                 type="submit"
               >

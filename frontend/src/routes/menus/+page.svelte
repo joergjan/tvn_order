@@ -153,6 +153,7 @@
                   autocomplete="off"
                 />
                 <button
+                  aria-label="delete-order"
                   class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
                   type="submit"
                 >
@@ -305,6 +306,7 @@
                   autocomplete="off"
                 />
                 <button
+                  aria-label="deleteOrder"
                   class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
                   type="submit"
                 >

@@ -103,6 +103,7 @@
               <div class="grid grid-cols-3 items-center content-center">
                 <div class="items-center justify-center flex">
                   <button
+                    aria-label="menu-amount-decrease"
                     on:click={() => {
                       decrement(i, true);
                     }}
@@ -138,6 +139,7 @@
                 </div>
                 <div class="items-center justify-center flex">
                   <button
+                    aria-label="menu-amount-increase"
                     class="p-1 border rounded-full {menuCounter[i] > 0
                       ? 'hover:bg-gray-200'
                       : ''} transition-all duration-200"
@@ -179,6 +181,7 @@
               <div class="grid grid-cols-3 items-center content-center">
                 <div class="items-center justify-center flex">
                   <button
+                    aria-label="drink-amount-decrease"
                     on:click={() => {
                       decrement(i, false);
                     }}
@@ -214,6 +217,7 @@
                 </div>
                 <div class="items-center justify-center flex">
                   <button
+                    aria-label="drink-amount-increase"
                     on:click={() => {
                       increment(i, false);
                     }}

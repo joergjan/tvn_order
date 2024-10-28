@@ -46,19 +46,21 @@
   }
 </script>
 
-{#if $error}
-  <div transition:slide>
-    <div
-      class="bg-red-500 border text-white px-4 py-3 z-50 text-center"
-      role="alert"
-    >
-      <strong class="font-bold">Fehler!</strong>
-      <span class="block sm:inline">{$error.message}</span>
+{#if data.username}
+  {#if $error && $error.message}
+    <div transition:slide>
+      <div
+        class="bg-red-500 border text-white px-4 py-3 z-50 text-center"
+        role="alert"
+      >
+        <strong class="font-bold">Fehler!</strong>
+        <span class="block sm:inline">{$error.message}</span>
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
 
-<Actions />
+  <Actions />
+{/if}
 
 <nav class="sticky top-0 z-10">
   <div
@@ -115,6 +117,7 @@
 
       <div class="-mr-2 flex items-center md:hidden gap-4">
         <button
+          aria-label="mobile-menu"
           name="Navigation"
           type="button"
           class="block h-10 w-10"
@@ -224,8 +227,8 @@
     </div>
   {/if}
 
-  <div class="bg-white h-2 md:block hidden" />
-  <div class="bg-gradient-to-b from-white h-3 md:opacity-[98%]" />
+  <div class="bg-white h-2 md:block hidden"></div>
+  <div class="bg-gradient-to-b from-white h-3 md:opacity-[98%]"></div>
 </nav>
 
 <div class="relative">
@@ -235,7 +238,7 @@
     </div>
   </div>
   <footer>
-    <div class="bg-tvblue h-1 mt-10 mb-8" />
+    <div class="bg-tvblue h-1 mt-10 mb-8"></div>
     <div class="mx-auto max-w-7xl overflow-hidden pb-20 pt-0 px-6 lg:px-8">
       <nav
         class="-mb-6 columns-2 md:flex md:justify-center md:space-x-12"
