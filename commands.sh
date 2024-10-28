@@ -21,7 +21,7 @@ run_sudo_command_background() {
 }
 
 # Example usage
-run_sudo_command 'cd frontend && npm ci && npm run build && sleep 10'
+run_sudo_command 'cd frontend && npm run build && sleep 10'
 run_sudo_command 'rm -rf app/* && cp -r frontend/build app/'
 run_sudo_command 'cp frontend/package.json app/'
 run_sudo_command 'cp frontend/package-lock.json app/'
