@@ -16,9 +16,9 @@ export const auth = lucia({
       userId: data.id,
     };
   },
-  sessionExpiresIn: {
-    activePeriod: 43200000,
-    idlePeriod: 604800000,
+  csrfProtection: false,
+  SessionCookieAttributes: {
+    sameSite: "none",  
   },
 });
 

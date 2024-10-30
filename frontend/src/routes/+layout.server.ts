@@ -4,6 +4,8 @@ import { prismaClient } from "$lib/server/db/prisma";
 export const load: LayoutServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
 
+  console.log(await locals.auth.validate())
+
   if (session?.user) {
     const getTables = async () => {
       const tables = await prismaClient.table.findMany({

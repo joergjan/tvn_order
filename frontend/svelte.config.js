@@ -1,5 +1,5 @@
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import adapter from "@sveltejs/adapter-auto";
+import adapter from "@sveltejs/adapter-node";
 import { config as envConfig } from "dotenv";
 
 if (process.env.NODE_ENV === "development") {
@@ -14,6 +14,7 @@ const config = {
   kit: {
     adapter: adapter({}),
   },
+  checkOrigin: false,
 };
 
 export default config;

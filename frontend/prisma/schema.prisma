@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:/home/admin/Documents/tvn/tvn_order/db/dev.db"
+  url      = "file:/home/admin/Documents/tvn/tvn_order/db/prod.db"
 }
 
 //datasource db {
