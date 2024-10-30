@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { enhance } from "$app/forms";
   import type { PageData } from "../$types";
+  import Actions from "../Actions.svelte";
 
   export let data: PageData & { users: any };
   $: ({ users, tables, userId, drinks, menus } = data);
@@ -15,6 +16,8 @@
 
   let loading = false;
 </script>
+
+<Actions />
 
 <h1>Administration</h1>
 

@@ -236,4 +236,14 @@ export const actions: Actions = {
       return fail(500, { message: "Failed to create new Table" });
     }
   },
+  fetchErrors: async ({}) => {
+    const error = await prismaClient.error.findFirst({
+      where: {
+        solved: false,
+      },
+    });
+    return {
+      error: JSON.stringify(await error),
+    };
+  },
 };

@@ -1,12 +1,11 @@
 <script lang="ts">
   import "../app.css";
-  import { currentPage } from "$lib/scripts/stores";
+  import { currentPage, error } from "$lib/scripts/stores";
   import { titles } from "$lib/scripts/navbar";
   import { fade, slide } from "svelte/transition";
   import type { LayoutData } from "./$types";
   import { onMount } from "svelte";
-  import { error } from "$lib/scripts/stores";
-  import Actions from "./Actions.svelte";
+ 
 
   export let data: LayoutData;
   let open = false;
@@ -46,7 +45,10 @@
   }
 </script>
 
-{#if data.username}
+
+
+<nav class="sticky top-0 z-10">
+  {#if data.username}
   {#if $error && $error.message}
     <div transition:slide>
       <div
@@ -58,11 +60,7 @@
       </div>
     </div>
   {/if}
-
-  <Actions />
 {/if}
-
-<nav class="sticky top-0 z-10">
   <div
     class="bg-white mx-auto max-w-7xl pt-2 pb-2 md:pb-0 px-4 sm:px-6 lg:px-8"
   >

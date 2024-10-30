@@ -4,6 +4,7 @@
   import type { PageData } from "./$types";
   import { fly } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
+  import Actions from "./Actions.svelte";
 
   export let data: PageData & { users: any };
   $: ({ tables, drinks, menus, username, myTable } = data);
@@ -38,6 +39,8 @@
     }
   }
 </script>
+
+<Actions />
 
 <div class="text-xl">
   <form
