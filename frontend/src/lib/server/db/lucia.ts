@@ -16,10 +16,6 @@ export const auth = lucia({
       userId: data.id,
     };
   },
-  csrfProtection: false,
-  SessionCookieAttributes: {
-    sameSite: "none",  
-  },
 });
 
 export type Auth = typeof auth;

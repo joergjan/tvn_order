@@ -92,7 +92,7 @@ export const actions: Actions = {
       await prismaClient.user.update({
         where: { id: id },
         data: {
-          isAdmin: formData.isAdmin === "false",
+          isAdmin: formData.isAdmin === "true",
         },
       });
     } catch (e) {
