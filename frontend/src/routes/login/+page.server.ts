@@ -24,7 +24,7 @@ export const actions: Actions = {
                 attributes: {}, // expects `Lucia.DatabaseSessionAttributes`
             });
             locals.auth.setSession(session);
-            console.log(await locals.auth.validate())
+          
         } catch (err) {
             console.error(err);
             throw redirect(302, "https://www.tvnussbaumen.ch");

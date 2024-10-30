@@ -33,14 +33,14 @@ async def print_orders(prisma):
         data={"solved": True}
     )
 
-    three_minutes_ago = datetime.utcnow() - timedelta(minutes=3)
+    some_mintues_ago = datetime.utcnow() - timedelta(minutes=2)
 
     # Fetch orders where printed is false
     orders = await prisma.order.find_many(
         where={
             'printed': False,
             "createdOn": {
-                'lt': three_minutes_ago.isoformat() + "Z"
+                'lt': some_mintues_ago.isoformat() + "Z"
             }
         },
         include={
