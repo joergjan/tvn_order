@@ -5,14 +5,8 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../../prod.db"
+  url      = "file:../../db/prod.db"
 }
-
-//datasource db {
-// provider = "postgresql"
-// url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-// directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-//}
 
 model Table {
   id    Int     @id @default(autoincrement())
@@ -31,7 +25,7 @@ model Order {
   name          String?
   printed       Boolean        @default(false)
   createdOn     DateTime       @default(now())
-  updatedOn     DateTime?
+  updatedOn     DateTime       @default(now())
   orderedDrinks OrderedDrinks?
   orderedMenus  OrderedMenus?
 }
@@ -53,8 +47,6 @@ model Drink {
 model OrderedDrinks {
   id         Int          @id @default(autoincrement())
   drinkOrder DrinkOrder[]
-  status     Int          @default(1)
-  paid       Boolean      @default(false)
   Order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId    Int          @unique
 }
@@ -62,8 +54,6 @@ model OrderedDrinks {
 model OrderedMenus {
   id        Int         @id @default(autoincrement())
   menuOrder MenuOrder[]
-  status    Int         @default(1)
-  paid      Boolean     @default(false)
   Order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   Int         @unique
 }

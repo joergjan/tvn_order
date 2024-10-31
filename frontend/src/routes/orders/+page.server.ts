@@ -7,11 +7,11 @@ export const load: PageServerLoad = async ({ locals }) => {
   if (!session) {
     throw redirect(302, "/login");
   }
-  const newOrders: Order[] = await prismaClient.order.findMany({
+  const printedOrders: Order[] = await prismaClient.order.findMany({
     where: {
-      orderedDrinks: {
-        status: 1,
-        drinkOrder: {
+      printed: true,
+      orderedMenus: {
+        menuOrder: {
           some: {},
         },
       },
@@ -20,6 +20,22 @@ export const load: PageServerLoad = async ({ locals }) => {
       table: {
         select: {
           name: true,
+        },
+      },
+      orderedMenus: {
+        select: {
+          menuOrder: {
+            select: {
+              amount: true,
+              menu: {
+                select: {
+                  name: true,
+                  price: true,
+                },
+              },
+            },
+          },
+          id: true,
         },
       },
       orderedDrinks: {
@@ -36,8 +52,6 @@ export const load: PageServerLoad = async ({ locals }) => {
             },
           },
           id: true,
-          status: true,
-          paid: true,
         },
       },
       user: {
@@ -48,11 +62,11 @@ export const load: PageServerLoad = async ({ locals }) => {
     },
   });
 
-  const ready: Order[] = await prismaClient.order.findMany({
+  const unprintedOrders: Order[] = await prismaClient.order.findMany({
     where: {
-      orderedDrinks: {
-        status: 2,
-        drinkOrder: {
+      printed: false,
+      orderedMenus: {
+        menuOrder: {
           some: {},
         },
       },
@@ -61,6 +75,22 @@ export const load: PageServerLoad = async ({ locals }) => {
       table: {
         select: {
           name: true,
+        },
+      },
+      orderedMenus: {
+        select: {
+          menuOrder: {
+            select: {
+              amount: true,
+              menu: {
+                select: {
+                  name: true,
+                  price: true,
+                },
+              },
+            },
+          },
+          id: true,
         },
       },
       orderedDrinks: {
@@ -77,8 +107,6 @@ export const load: PageServerLoad = async ({ locals }) => {
             },
           },
           id: true,
-          status: true,
-          paid: true,
         },
       },
       user: {
@@ -90,8 +118,8 @@ export const load: PageServerLoad = async ({ locals }) => {
   });
 
   return {
-    ready: ready,
-    newOrders: newOrders,
+    printedOrders: printedOrders,
+    unprintedOrders: unprintedOrders,
   };
 };
 
@@ -105,7 +133,7 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.orderedDrinks.delete({
+      await prismaClient.orderedMenus.delete({
         where: { id: Number(formData.id) },
       });
     } catch (err) {
@@ -113,7 +141,7 @@ export const actions: Actions = {
       return fail(500, { message: "Failed to delete order" });
     }
   },
-  changeStatusToReady: async ({ request, locals }) => {
+  updateOrder: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -122,57 +150,15 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.orderedDrinks.update({
+      await prismaClient.orderedMenus.delete({
         where: { id: Number(formData.id) },
-        data: {
-          status: 2,
-        },
       });
     } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
+      console.error("Error deleting order", err);
+      return fail(500, { message: "Failed to delete order" });
     }
   },
-  changeStatusToServed: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
 
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.orderedDrinks.update({
-        where: { id: Number(formData.id) },
-        data: {
-          status: 3,
-        },
-      });
-    } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
-    }
-  },
-  updatePaymentStatus: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.orderedDrinks.update({
-        where: { id: Number(formData.id) },
-        data: {
-          paid: true,
-        },
-      });
-    } catch (err) {
-      console.error("Error updating order", err);
-      return fail(500, { message: "Failed to update order" });
-    }
-  },
   fetchErrors: async ({}) => {
     const error = await prismaClient.error.findFirst({
       where: {

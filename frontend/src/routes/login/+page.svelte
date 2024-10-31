@@ -6,25 +6,24 @@
   <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<form method="POST" use:enhance class="space-y-5 -my-5" enctype="multipart/form-data">
+<form
+  method="POST"
+  use:enhance
+  class="space-y-5 -my-5"
+  enctype="multipart/form-data"
+>
   <hgroup>
     <h1>Login</h1>
   </hgroup>
 
   <div class="flex justify-between items-center">
     <label for="username" class="mr-3">Benutzername</label>
-    <input class="w-56" type="username" id="username" name="username" required />
+    <input type="username" id="username" name="username" required />
   </div>
 
   <div class="flex justify-between items-center">
     <label for="password" class="mr-3">Password</label>
-    <input
-      class="w-56"
-      type="password"
-      id="password"
-      name="password"
-      required
-    />
+    <input type="password" id="password" name="password" required />
   </div>
 
   <button
@@ -34,3 +33,9 @@
     <p class="group-hover:scale-105">Login</p></button
   >
 </form>
+
+<style>
+  input {
+    @apply h-10 w-56;
+  }
+</style>

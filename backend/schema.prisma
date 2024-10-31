@@ -47,8 +47,6 @@ model Drink {
 model OrderedDrinks {
   id         Int          @id @default(autoincrement())
   drinkOrder DrinkOrder[]
-  status     Int          @default(1)
-  paid       Boolean      @default(false)
   Order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId    Int          @unique
 }
@@ -56,8 +54,6 @@ model OrderedDrinks {
 model OrderedMenus {
   id        Int         @id @default(autoincrement())
   menuOrder MenuOrder[]
-  status    Int         @default(1)
-  paid      Boolean     @default(false)
   Order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   Int         @unique
 }

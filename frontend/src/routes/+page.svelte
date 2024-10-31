@@ -5,12 +5,10 @@
   import { fly } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import Actions from "./Actions.svelte";
+  import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { users: any };
-  $: ({ tables, drinks, menus, username, myTable } = data);
-
-  $: myChosenTable = myTable;
-  $: orderForTable = myTable;
+  $: ({ tables, drinks, menus } = data);
 
   let loading = false;
   let showError = false;
@@ -64,11 +62,14 @@
           menuCounter = menuCounter;
           drinkCounter.fill(0);
           drinkCounter = drinkCounter;
+          invalidateAll();
           setTimeout(() => {
             showSuccess = false;
           }, 3500);
         } else {
           showError = true;
+          invalidateAll();
+          formElement.reset();
           setTimeout(() => {
             showError = false;
           }, 3500);
@@ -78,17 +79,25 @@
       };
     }}
   >
-    <div class="">
-      <label for="table">Für Tisch </label>
-      <select name="table" bind:value={orderForTable} required>
-        {#each tables ?? [] as table}
-          <option value={table.id}>{table.name}</option>
-        {/each}
-      </select>
-    </div>
+    <div class="space-y-3">
+      <div class="flex items-center">
+        <div class="w-24">
+          <label for="table" class="">Tisch</label>
+        </div>
+        <select name="table" required>
+          <option value="" disabled selected>wählen</option>
+          {#each tables ?? [] as table}
+            <option value={table.id}>{table.name}</option>
+          {/each}
+        </select>
+      </div>
 
-    <div class="pt-3">
-      <input type="text" id="name" name="name" placeholder="Name (optional)" />
+      <div class="flex items-center">
+        <div class="w-24">
+          <label for="name">Name</label>
+        </div>
+        <input type="text" id="name" name="name" placeholder="(optional)" />
+      </div>
     </div>
     <div class="grid md:grid-cols-2">
       <div class="mt-8">
@@ -320,26 +329,6 @@
 {/if}
 
 <div class="mt-10"></div>
-
-<div>
-  <h3>Mein Tisch</h3>
-
-  <form action="?/chooseTable" class="flex space-x-2" method="POST" use:enhance>
-    <select name="table" bind:value={myChosenTable}>
-      {#each tables ?? [] as table}
-        <option value={table.id}>{table.name}</option>
-      {/each}
-    </select>
-    <div class="place-content-end">
-      <button
-        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
-        type="submit"
-      >
-        <p class="group-hover:scale-105">Speichern</p>
-      </button>
-    </div>
-  </form>
-</div>
 
 {#if loading}
   <div

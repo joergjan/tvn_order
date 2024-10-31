@@ -41,6 +41,9 @@ async def print_orders(prisma):
             'printed': False,
             "createdOn": {
                 'lt': some_mintues_ago.isoformat() + "Z"
+            },
+            "updatedOn": {
+                'lt': some_mintues_ago.isoformat() + "Z"
             }
         },
         include={

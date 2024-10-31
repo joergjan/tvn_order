@@ -5,7 +5,6 @@
   let totalMenuOrderPrice: string = "0";
   let totalDrinkOrderPrice: string = "0";
   let isMenu = showMenuOrDrink === "menu";
-  let isPaid = false;
 
   if (isMenu && order?.orderedMenus?.menuOrder?.length > 0) {
     totalMenuOrderPrice = order.orderedMenus.menuOrder
@@ -29,42 +28,26 @@
       .toFixed(2);
   }
 
-  $: {
-    if (isMenu) {
-      isPaid = order.orderedMenus?.paid;
-    } else {
-      isPaid = order.orderedDrinks?.paid;
-    }
-  }
-
   let totalPrice = (
     parseFloat(totalMenuOrderPrice) + parseFloat(totalDrinkOrderPrice)
   ).toFixed(2);
 </script>
 
 <div
-  class="relative rounded-md p-2 mb-2 {order.orderedMenus?.status === 1 ||
-  order.orderedDrinks?.status === 1
-    ? 'bg-yellow-300'
-    : order.orderedMenus?.status === 2 || order.orderedDrinks?.status === 2
-      ? 'bg-blue-300'
-      : 'bg-green-300'}"
+  class="relative rounded-md p-2 mb-2 shadow-md {order.printed
+    ? 'bg-green-300'
+    : 'bg-red-300'}"
 >
-  {#if !isPaid}
-    <div
-      class="h-8 absolute top-0 left-0 right-0 rounded-t-md items-center justify-center flex bg-red-500 text-white font-semibold"
-    >
-      noch nicht bezahlt!
-    </div>
-    <div class="h-8"></div>
-  {:else}
-    <div
-      class="h-2 absolute top-0 left-0 right-0 rounded-t-md items-center justify-center flex bg-green-500 font-semibold"
-    ></div>
-    <div class="h-2"></div>
-  {/if}
+  <div
+    class="h-12 absolute top-0 left-0 right-0 rounded-t-md items-center justify-center flex {order.printed
+      ? 'text-white bg-green-500'
+      : ' text-white bg-red-500'}  font-semibold"
+  >
+    {order.printed ? "bereits gedruckt :)" : "nicht gedruckt!"}
+  </div>
+  <div class="h-12"></div>
   <p class="font-bold">Bestellung {order.id}</p>
-  <div class="absolute {isPaid ? 'top-5' : 'top-10'} right-3">
+  <div class="absolute top-14 right-3">
     <p>{order.user.username}</p>
   </div>
   <h3>Tisch {order.table.name}</h3>
