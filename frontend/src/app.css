@@ -51,6 +51,6 @@ input[type="number"]
     @apply py-1 h-10;
 }
 
-button {
+html {
     touch-action: manipulation;
 }

@@ -92,7 +92,7 @@ export const actions: Actions = {
       await prismaClient.user.update({
         where: { id: id },
         data: {
-          isAdmin: formData.isAdmin === "true",
+          isAdmin: formData.isAdmin === "on",
         },
       });
     } catch (e) {
@@ -236,7 +236,7 @@ export const actions: Actions = {
       return fail(500, { message: "Failed to create new Table" });
     }
   },
-  fetchErrors: async ({}) => {
+  fetchErrors: async () => {
     const error = await prismaClient.error.findFirst({
       where: {
         solved: false,

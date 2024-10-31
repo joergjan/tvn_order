@@ -12,7 +12,7 @@
   let updateTableForm: HTMLFormElement[] = [];
   let updateMenuForm: HTMLFormElement[] = [];
   let updateDrinkForm: HTMLFormElement[] = [];
-  let updateUserForm: HTMLFormElement;
+  let updateUserForm: HTMLFormElement[] = [];
 
   let loading = false;
 </script>
@@ -396,14 +396,14 @@
         <p class="flex justify-center">Admin</p>
         <p class="justify-end flex">löschen</p>
       </li>
-      {#each users ?? [] as user}
+      {#each users ?? [] as user, i}
         <li class="grid grid-cols-3">
           <form
             action="?/updateUser"
             method="POST"
             use:enhance
             class="col-span-2 grid grid-cols-2"
-            bind:this={updateUserForm}
+            bind:this={updateUserForm[i]}
           >
             <p class="flex items-center">{user.username}</p>
 
@@ -416,14 +416,13 @@
             />
             <div class="flex justify-center items-center">
               <input
+                class="h-5 w-5"
                 type="checkbox"
                 name="isAdmin"
                 autocomplete="off"
                 bind:checked={user.isAdmin}
-                bind:value={user.isAdmin}
                 on:change={() => {
-                  console.log(user.isAdmin);
-                  updateUserForm.requestSubmit();
+                  updateUserForm[i].requestSubmit();
                 }}
               />
             </div>
