@@ -28,6 +28,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
                   select: {
                     name: true,
                     price: true,
+                    id: true,
                   },
                 },
               },
@@ -44,6 +45,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
                   select: {
                     name: true,
                     price: true,
+                    id: true,
                   },
                 },
               },
