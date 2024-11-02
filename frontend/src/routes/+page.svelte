@@ -28,6 +28,10 @@
       document.body.style.margin = "0";
       document.body.style.height = "100%";
       document.body.style.overflow = "hidden";
+      document.body.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      window.scrollTo(0, 0);
     }
   }
 
@@ -36,8 +40,6 @@
       document.body.style.margin = "";
       document.body.style.height = "";
       document.body.style.overflow = "";
-      document.body.scrollTop = 0
-      document.documentElement.scrollTop = 0
     }
   }
 
@@ -445,5 +447,9 @@
     to {
       transform: rotate(360deg);
     }
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 </style>
