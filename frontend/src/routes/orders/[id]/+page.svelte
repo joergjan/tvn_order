@@ -17,11 +17,36 @@
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
 
+  onMount(() => {
+    calculateDrinkCounter();
+    calculateMenuCounter();
+  });
+
+  $: order && console.log(order.menuOrder);
+
   function calculateMenuCounter() {
-    for (var i = 0, j = order.orderedMenus.length; i < j; i++) {}
+    if (order && menus) {
+      for (var i = 0; i < order.menuOrder.length; i++) {
+        for (var j = 0; j < menus.length; j++) {
+          if ((menus[j].id = order.menuOrder[i].menu.id)) {
+            menuCounter[j] = order.menuOrder[i].amount;
+          }
+        }
+      }
+    }
   }
 
-  function calculateDrinkCounter() {}
+  function calculateDrinkCounter() {
+    if (order && drinks) {
+      for (var i = 0; i < order.drinkOrder.length; i++) {
+        for (var j = 0; j < menus.length; j++) {
+          if ((menus[j].id = order.drinkOrder[i].drink.id)) {
+            drinkCounter[j] = order.drinkOrder[i].amount;
+          }
+        }
+      }
+    }
+  }
 
   function increment(index: number, menu: boolean) {
     if (menu) {

@@ -10,6 +10,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
         include: {
           order: true,
         },
+        orderBy: {
+          name: "asc",
+        },
       });
       return tables;
     };
@@ -32,19 +35,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
       return drinks;
     };
 
-    const getMyTable = async () => {
-      const table = await prismaClient.user.findFirst({
-        where: {
-          id: session.user.userId,
-        },
-        include: {
-          table: true,
-        },
-      });
-
-      return table?.tableId;
-    };
-
     return {
       tables: await getTables(),
       menus: await getMenus(),
@@ -52,7 +42,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
       isAdmin: session.user.isAdmin,
       username: session.user.username,
       userId: session.user.userId,
-      myTable: await getMyTable(),
     };
   }
 };
