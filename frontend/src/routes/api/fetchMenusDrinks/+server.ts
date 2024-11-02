@@ -17,8 +17,6 @@ export async function GET({ request, locals }) {
       return drinks;
     };
 
-    console.log(await menus);
-
     return json({
       menus: await getMenus(),
       drinks: await getDrinks(),

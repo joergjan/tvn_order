@@ -67,21 +67,23 @@
     <h4>für {order.name}</h4>
   {/if}
   <ul class="lg:flex lg:space-x-20 lg:space-y-0 space-y-10">
-    {#if order?.orderedMenus?.menuOrder?.length > 0}
+    {#if order?.orderedMenus?.menuOrder.some((menuOrder) => menuOrder.amount > 0)}
       <li class="w-48">
         <div class="flex justify-between">
           <p class="">Menus</p>
           <p class="">CHF</p>
         </div>
-        {#each order?.orderedMenus?.menuOrder as menu}
-          <div class="flex justify-between text-xl font-medium">
-            <p>
-              {menu.menu.name} x {menu.amount}
-            </p>
-            <p>
-              {(menu.amount * menu.menu.price).toFixed(2)}
-            </p>
-          </div>
+        {#each order?.orderedMenus?.menuOrder as menuOrder}
+          {#if menuOrder.amount > 0}
+            <div class="flex justify-between text-xl font-medium">
+              <p>
+                {menuOrder.menu.name} x {menuOrder.amount}
+              </p>
+              <p>
+                {(menuOrder.amount * menuOrder.menu.price).toFixed(2)}
+              </p>
+            </div>
+          {/if}
         {/each}
         <div class="flex justify-between">
           <p>Total Menus</p>
@@ -89,21 +91,23 @@
         </div>
       </li>
     {/if}
-    {#if order?.orderedDrinks?.drinkOrder.length > 0}
+    {#if order?.orderedDrinks?.drinkOrder.some((drinkOrder) => drinkOrder.amount > 0)}
       <li class="w-48">
         <div class="flex justify-between">
           <p class="">Getränke</p>
           <p class="">CHF</p>
         </div>
-        {#each order.orderedDrinks.drinkOrder as drink}
-          <div class="flex justify-between text-xl font-medium">
-            <p>
-              {drink.drink.name} x {drink.amount}
-            </p>
-            <p>
-              {(drink.amount * drink.drink.price).toFixed(2)}
-            </p>
-          </div>
+        {#each order.orderedDrinks.drinkOrder as drinkOrder}
+          {#if drinkOrder.amount > 0}
+            <div class="flex justify-between text-xl font-medium">
+              <p>
+                {drinkOrder.drink.name} x {drinkOrder.amount}
+              </p>
+              <p>
+                {(drinkOrder.amount * drinkOrder.drink.price).toFixed(2)}
+              </p>
+            </div>
+          {/if}
         {/each}
         <div class="flex justify-between">
           <p>Total Getränke</p>

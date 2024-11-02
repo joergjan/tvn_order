@@ -39,20 +39,19 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     // Extract menu and drink orders from formData
+    // Extract menu and drink orders from formData
     const menuOrders = Object.keys(formData)
-      .filter((key) => key.startsWith("menuCount") && Number(formData[key]) > 0)
+      .filter((key) => key.startsWith("menuCount")) // no check for amount
       .map((key) => ({
         menuId: key.slice(9), // remove 'menuCount' prefix to get the ID
-        amount: formData[key],
+        amount: Number(formData[key]), // convert to Number
       }));
 
     const drinkOrders = Object.keys(formData)
-      .filter(
-        (key) => key.startsWith("drinkCount") && Number(formData[key]) > 0
-      )
+      .filter((key) => key.startsWith("drinkCount")) // no check for amount
       .map((key) => ({
         drinkId: key.slice(10), // remove 'drinkCount' prefix to get the ID
-        amount: formData[key],
+        amount: Number(formData[key]), // convert to Number
       }));
 
     let order: Order;

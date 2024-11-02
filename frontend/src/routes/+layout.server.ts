@@ -15,13 +15,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     };
 
     const getMenus = async () => {
-      const menus = await prismaClient.menu.findMany({
-        select: {
-          id: true,
-          name: true,
-        },
-      });
-
+      const menus = await prismaClient.menu.findMany({});
       return menus;
     };
 
