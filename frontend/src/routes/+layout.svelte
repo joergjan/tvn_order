@@ -57,8 +57,8 @@
           <span class="block sm:inline">{$error.message}</span>
         </div>
       </div>
-      <Actions />
     {/if}
+    <Actions />
   {/if}
   <div
     class="bg-white mx-auto max-w-7xl pt-2 pb-2 md:pb-0 px-4 sm:px-6 lg:px-8"
