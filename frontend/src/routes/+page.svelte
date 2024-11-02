@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
-  import { fly } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import Actions from "./Actions.svelte";
   import { invalidateAll } from "$app/navigation";
@@ -18,6 +18,7 @@
   let showSuccess = false;
   let order: Order;
   let showOrder = false;
+  let tableId;
 
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
@@ -111,7 +112,7 @@
         <div class="w-24">
           <label for="table" class="">Tisch</label>
         </div>
-        <select name="table" required>
+        <select name="table" required bind:value={tableId}>
           <option value="" disabled selected>wählen</option>
           {#each tables ?? [] as table}
             <option value={table.id}>{table.name}</option>
@@ -287,8 +288,11 @@
     <div class="mt-10"></div>
     <div class="flex justify-center">
       <button
-        class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
+        class="{tableId > 0
+          ? 'bg-tvblue hover:bg-tvbluelight text-white group pointer-events-auto'
+          : 'bg-gray-500 text-gray-400 pointer-events-none'} rounded-md py-2 px-3"
         type="submit"
+        disabled={tableId == null}
       >
         <p class="group-hover:scale-105">Speichern</p>
       </button>
@@ -406,6 +410,7 @@
     </a>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div
+      in:fade
       class="absolute z-75 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-screen order-container md:px-12 lg:px-56 xl:px-96"
       on:click={(e) => e.stopPropagation()}
       role="alertdialog"

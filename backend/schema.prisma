@@ -12,7 +12,6 @@ model Table {
   id    Int     @id @default(autoincrement())
   name  String
   order Order[]
-  User  User[]
 }
 
 model Order {
@@ -84,8 +83,6 @@ model User {
   order        Order[]
   key          Key[]
   auth_session Session[]
-  table        Table?    @relation(fields: [tableId], references: [id])
-  tableId      Int?
 }
 
 model Error {

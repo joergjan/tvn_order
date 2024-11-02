@@ -127,32 +127,4 @@ export const actions: Actions = {
       return fail(500, { message: "Failed to delete order" });
     }
   },
-  updateOrder: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.orderedMenus.delete({
-        where: { id: Number(formData.id) },
-      });
-    } catch (err) {
-      console.error("Error deleting order", err);
-      return fail(500, { message: "Failed to delete order" });
-    }
-  },
-
-  fetchErrors: async ({}) => {
-    const error = await prismaClient.error.findFirst({
-      where: {
-        solved: false,
-      },
-    });
-    return {
-      error: JSON.stringify(await error),
-    };
-  },
 };

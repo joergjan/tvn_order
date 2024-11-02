@@ -10,26 +10,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-  chooseTable: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
-
-    const formData = Object.fromEntries(await request.formData());
-
-    try {
-      await prismaClient.user.update({
-        where: { id: session.user.userId },
-        data: {
-          tableId: Number(formData.table),
-        },
-      });
-    } catch (err) {
-      console.error("Error creating new Person:", err);
-      return fail(500, { message: "Failed to create new Person" });
-    }
-  },
   createOrder: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
@@ -138,15 +118,5 @@ export const actions: Actions = {
       console.error("Error creating new Order:", err);
       return fail(500, { message: "Failed to create new Order" });
     }
-  },
-  fetchErrors: async ({}) => {
-    const error = await prismaClient.error.findFirst({
-      where: {
-        solved: false,
-      },
-    });
-    return {
-      error: JSON.stringify(await error),
-    };
   },
 };
