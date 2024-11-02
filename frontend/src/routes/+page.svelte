@@ -8,6 +8,7 @@
   import { invalidateAll } from "$app/navigation";
   import Order from "$lib/components/Order.svelte";
   import { redirect } from "@sveltejs/kit";
+  import { browser } from "$app/environment";
 
   export let data: PageData & { users: any };
   $: ({ tables, drinks, menus } = data);
@@ -20,6 +21,28 @@
 
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
+
+  function disableScroll() {
+    if (browser) {
+      document.body.style.margin = "0";
+      document.body.style.height = "100%";
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function enableScroll() {
+    if (browser) {
+      document.body.style.margin = "";
+      document.body.style.height = "";
+      document.body.style.overflow = "";
+    }
+  }
+
+  $: if (showOrder) {
+    disableScroll();
+  } else {
+    enableScroll();
+  }
 
   function increment(index: number, menu: boolean) {
     if (menu) {
@@ -59,7 +82,6 @@
         loading = false;
         if (result.type === "success") {
           order = await result.data.order;
-          console.log(order);
           formElement.reset();
           showSuccess = true;
           menuCounter.fill(0);
