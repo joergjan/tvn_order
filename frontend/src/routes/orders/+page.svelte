@@ -29,7 +29,7 @@
     <h3>Nicht Gedruckt</h3>
     {#each unprintedOrders as order, i}
       <li class="relative">
-        <Order {order} showMenuOrDrink="menu" />
+        <Order {order} />
 
         <div class="absolute top-2 left-2">
           <form
@@ -54,7 +54,7 @@
             <input
               hidden
               type="number"
-              bind:value={order.orderedMenus.id}
+              bind:value={order.id}
               name="id"
               autocomplete="off"
             />

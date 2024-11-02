@@ -7,7 +7,7 @@
   import Actions from "../../Actions.svelte";
 
   export let data: PageData & { orders: any };
-  $: ({ printedOrders, unprintedOrders } = data);
+  $: ({ printedOrders, unprintedOrders, menus } = data);
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -31,7 +31,7 @@
     <h3>Nicht Gedruckt</h3>
     {#each unprintedOrders as order, i}
       <li class="relative">
-        <Order {order} showMenuOrDrink="menu" />
+        <Order {order} />
 
         <div class="absolute top-2 left-2">
           <form

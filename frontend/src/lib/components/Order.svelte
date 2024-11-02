@@ -1,12 +1,12 @@
 <script lang="ts">
   export let order;
-  export let showMenuOrDrink: "menu" | "drink" = "menu";
 
   let totalMenuOrderPrice: string = "0";
   let totalDrinkOrderPrice: string = "0";
-  let isMenu = showMenuOrDrink === "menu";
+  let updatedOn: Date = new Date(order.updatedOn);
+  let time: string;
 
-  if (isMenu && order?.orderedMenus?.menuOrder?.length > 0) {
+  if (order?.orderedMenus?.menuOrder?.length > 0) {
     totalMenuOrderPrice = order.orderedMenus.menuOrder
       .reduce(
         (
@@ -16,7 +16,8 @@
         0
       )
       .toFixed(2);
-  } else if (order?.orderedDrinks?.drinkOrder?.length > 0) {
+  }
+  if (order?.orderedDrinks?.drinkOrder?.length > 0) {
     totalDrinkOrderPrice = order.orderedDrinks.drinkOrder
       .reduce(
         (
@@ -31,6 +32,15 @@
   let totalPrice = (
     parseFloat(totalMenuOrderPrice) + parseFloat(totalDrinkOrderPrice)
   ).toFixed(2);
+
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  };
+
+  time = updatedOn.toLocaleTimeString("ch-DE", options);
 </script>
 
 <div
@@ -46,23 +56,25 @@
     {order.printed ? "bereits gedruckt :)" : "nicht gedruckt!"}
   </div>
   <div class="h-12"></div>
-  <p class="font-bold">Bestellung {order.id}</p>
-  <div class="absolute top-14 right-3">
-    <p>{order.user.username}</p>
+  <div class="flex justify-between relative">
+    <p class="w-1/3 flex justify-start">Bestellung {order.id}</p>
+    <p class="w-1/3 flex justify-center">{time}</p>
+    <p class="w-1/3 flex justify-end">{order.user.username}</p>
   </div>
+
   <h3>Tisch {order.table.name}</h3>
   {#if order.name}
     <h4>für {order.name}</h4>
   {/if}
   <ul class="lg:flex lg:space-x-20 lg:space-y-0 space-y-10">
-    {#if isMenu && order?.orderedMenus?.menuOrder?.length > 0}
+    {#if order?.orderedMenus?.menuOrder?.length > 0}
       <li class="w-48">
         <div class="flex justify-between">
-          <p class="font-bold">Menus</p>
-          <p class="font-bold">CHF</p>
+          <p class="">Menus</p>
+          <p class="">CHF</p>
         </div>
         {#each order?.orderedMenus?.menuOrder as menu}
-          <div class="flex justify-between">
+          <div class="flex justify-between text-xl font-medium">
             <p>
               {menu.menu.name} x {menu.amount}
             </p>
@@ -71,19 +83,20 @@
             </p>
           </div>
         {/each}
-        <div class="flex justify-between font-semibold">
+        <div class="flex justify-between">
           <p>Total Menus</p>
           <p>{totalMenuOrderPrice}</p>
         </div>
       </li>
-    {:else if order?.orderedDrinks?.drinkOrder.length > 0}
+    {/if}
+    {#if order?.orderedDrinks?.drinkOrder.length > 0}
       <li class="w-48">
         <div class="flex justify-between">
-          <p class="font-bold">Getränke</p>
-          <p class="font-bold">CHF</p>
+          <p class="">Getränke</p>
+          <p class="">CHF</p>
         </div>
         {#each order.orderedDrinks.drinkOrder as drink}
-          <div class="flex justify-between">
+          <div class="flex justify-between text-xl font-medium">
             <p>
               {drink.drink.name} x {drink.amount}
             </p>
@@ -92,14 +105,14 @@
             </p>
           </div>
         {/each}
-        <div class="flex justify-between font-semibold">
+        <div class="flex justify-between">
           <p>Total Getränke</p>
           <p>{totalDrinkOrderPrice}</p>
         </div>
       </li>
     {/if}
   </ul>
-  <div class="flex justify-between font-bold text-xl">
+  <div class="flex justify-between font-semibold text-xl mt-3">
     <p>Total</p>
     <p>CHF {totalPrice}</p>
   </div>

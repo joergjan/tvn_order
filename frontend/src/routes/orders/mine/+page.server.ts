@@ -10,11 +10,6 @@ export const load: PageServerLoad = async ({ locals }) => {
   const printedOrders: Order[] = await prismaClient.order.findMany({
     where: {
       printed: true,
-      orderedMenus: {
-        menuOrder: {
-          some: {},
-        },
-      },
       user: {
         id: session.user.userId,
       },
@@ -38,7 +33,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       orderedDrinks: {
@@ -54,7 +48,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       user: {
@@ -68,11 +61,6 @@ export const load: PageServerLoad = async ({ locals }) => {
   const unprintedOrders: Order[] = await prismaClient.order.findMany({
     where: {
       printed: false,
-      orderedMenus: {
-        menuOrder: {
-          some: {},
-        },
-      },
       user: {
         id: session.user.userId,
       },

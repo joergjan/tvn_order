@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   try {
     const order: Order = await prismaClient.order.findUnique({
       where: {
-        id: Number(params.id),
+        id: Number(params.orderId),
       },
       include: {
         table: {
@@ -24,16 +24,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             menuOrder: {
               select: {
                 amount: true,
-                menu: {
-                  select: {
-                    name: true,
-                    price: true,
-                    id: true,
-                  },
-                },
+                menu: {},
               },
             },
-            id: true,
           },
         },
         orderedDrinks: {
@@ -41,16 +34,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
             drinkOrder: {
               select: {
                 amount: true,
-                drink: {
-                  select: {
-                    name: true,
-                    price: true,
-                    id: true,
-                  },
-                },
+                drink: {},
               },
             },
-            id: true,
           },
         },
         user: {

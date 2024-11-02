@@ -7,9 +7,6 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   if (session?.user) {
     const getTables = async () => {
       const tables = await prismaClient.table.findMany({
-        include: {
-          order: true,
-        },
         orderBy: {
           name: "asc",
         },
@@ -19,19 +16,17 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 
     const getMenus = async () => {
       const menus = await prismaClient.menu.findMany({
-        include: {
-          order: true,
+        select: {
+          id: true,
+          name: true,
         },
       });
+
       return menus;
     };
 
     const getDrinks = async () => {
-      const drinks = await prismaClient.drink.findMany({
-        include: {
-          order: true,
-        },
-      });
+      const drinks = await prismaClient.drink.findMany({});
       return drinks;
     };
 

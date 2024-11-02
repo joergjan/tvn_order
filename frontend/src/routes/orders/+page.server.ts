@@ -10,11 +10,6 @@ export const load: PageServerLoad = async ({ locals }) => {
   const printedOrders: Order[] = await prismaClient.order.findMany({
     where: {
       printed: true,
-      orderedMenus: {
-        menuOrder: {
-          some: {},
-        },
-      },
     },
     include: {
       table: {
@@ -35,7 +30,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       orderedDrinks: {
@@ -51,7 +45,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       user: {
@@ -65,11 +58,6 @@ export const load: PageServerLoad = async ({ locals }) => {
   const unprintedOrders: Order[] = await prismaClient.order.findMany({
     where: {
       printed: false,
-      orderedMenus: {
-        menuOrder: {
-          some: {},
-        },
-      },
     },
     include: {
       table: {
@@ -90,7 +78,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       orderedDrinks: {
@@ -106,7 +93,6 @@ export const load: PageServerLoad = async ({ locals }) => {
               },
             },
           },
-          id: true,
         },
       },
       user: {
@@ -133,7 +119,7 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.orderedMenus.delete({
+      await prismaClient.order.delete({
         where: { id: Number(formData.id) },
       });
     } catch (err) {
