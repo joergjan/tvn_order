@@ -6,7 +6,7 @@
   import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { orders: any };
-  $: ({ printedOrders, unprintedOrders, menus } = data);
+  $: ({ printedOrders, unprintedOrders } = data);
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -53,7 +53,7 @@
             <input
               hidden
               type="number"
-              bind:value={order.orderedMenus.id}
+              bind:value={order.id}
               name="id"
               autocomplete="off"
             />

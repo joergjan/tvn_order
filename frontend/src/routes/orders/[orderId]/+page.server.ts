@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
-  updateOrder: async ({ request, locals, params }) => {
+  updateTable: async ({ request, locals, params }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -68,14 +68,78 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    // Extract menu and drink orders from formData
-    // Extract menu and drink orders from formData
+    let order: Order;
+
+    try {
+      order = await prismaClient.order.update({
+        where: {
+          id: Number(params.orderId),
+        },
+        data: {
+          table: {
+            connect: {
+              id: Number(formData.table),
+            },
+          },
+        },
+      });
+    } catch (err) {
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
+    }
+  },
+  updateMenus: async ({ request, locals, params }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
     const menuOrders = Object.keys(formData)
       .filter((key) => key.startsWith("menuCount")) // no check for amount
       .map((key) => ({
         menuId: key.slice(9), // remove 'menuCount' prefix to get the ID
         amount: Number(formData[key]), // convert to Number
       }));
+
+    let order: Order;
+
+    try {
+      order = await prismaClient.order.update({
+        where: {
+          id: Number(params.orderId),
+        },
+        data: {
+          orderedMenus: {
+            update: {
+              menuOrder: {
+                deleteMany: {},
+                create: menuOrders.map(({ menuId, amount }) => ({
+                  menu: {
+                    connect: {
+                      id: Number(menuId),
+                    },
+                  },
+                  amount: Number(amount),
+                })),
+              },
+            },
+          },
+        },
+      });
+    } catch (err) {
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
+    }
+  },
+  updateDrinks: async ({ request, locals, params }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
 
     const drinkOrders = Object.keys(formData)
       .filter((key) => key.startsWith("drinkCount")) // no check for amount
@@ -92,40 +156,45 @@ export const actions: Actions = {
           id: Number(params.orderId),
         },
         data: {
-          name: (formData.name as string) || "",
-          table: {
-            update: {
-              id: Number(formData.table),
-            },
-          },
-          orderedMenus: {
-            update: {
-              menuOrder: {
-                update: menuOrders.map(({ menuId, amount }) => ({
-                  where: {
-                    menuId: Number(menuId), // Assuming you have a unique constraint on menuId
-                  },
-                  data: {
-                    amount: Number(amount), // Update the amount
-                  },
-                })),
-              },
-            },
-          },
           orderedDrinks: {
             update: {
               drinkOrder: {
-                update: drinkOrders.map(({ drinkId, amount }) => ({
-                  where: {
-                    drinkId: Number(drinkId), // Assuming you have a unique constraint on drinkId
+                deleteMany: {},
+                create: drinkOrders.map(({ drinkId, amount }) => ({
+                  drink: {
+                    connect: {
+                      id: Number(drinkId),
+                    },
                   },
-                  data: {
-                    amount: Number(amount), // Update the amount
-                  },
+                  amount: Number(amount),
                 })),
               },
             },
           },
+        },
+      });
+    } catch (err) {
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
+    }
+  },
+  updateName: async ({ request, locals, params }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    let order: Order;
+
+    try {
+      order = await prismaClient.order.update({
+        where: {
+          id: Number(params.orderId),
+        },
+        data: {
+          name: (formData.name as string) || "",
         },
       });
     } catch (err) {

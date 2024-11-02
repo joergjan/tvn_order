@@ -4,7 +4,6 @@
   import type { PageData } from "../$types";
   import Order from "$lib/components/Order.svelte";
   import { invalidateAll } from "$app/navigation";
-  import Actions from "../Actions.svelte";
 
   export let data: PageData & { orders: any };
   $: ({ printedOrders, unprintedOrders } = data);

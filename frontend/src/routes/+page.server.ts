@@ -99,7 +99,41 @@ export const actions: Actions = {
             },
           },
         },
+        include: {
+          table: {
+            select: {
+              name: true,
+            },
+          },
+          orderedMenus: {
+            select: {
+              menuOrder: {
+                select: {
+                  amount: true,
+                  menu: {},
+                },
+              },
+            },
+          },
+          orderedDrinks: {
+            select: {
+              drinkOrder: {
+                select: {
+                  amount: true,
+                  drink: {},
+                },
+              },
+            },
+          },
+          user: {
+            select: {
+              username: true,
+            },
+          },
+        },
       });
+
+      return { order: order };
     } catch (err) {
       console.error("Error creating new Order:", err);
       return fail(500, { message: "Failed to create new Order" });

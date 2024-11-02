@@ -6,6 +6,8 @@
   import { cubicOut } from "svelte/easing";
   import Actions from "./Actions.svelte";
   import { invalidateAll } from "$app/navigation";
+  import Order from "$lib/components/Order.svelte";
+  import { redirect } from "@sveltejs/kit";
 
   export let data: PageData & { users: any };
   $: ({ tables, drinks, menus } = data);
@@ -13,6 +15,8 @@
   let loading = false;
   let showError = false;
   let showSuccess = false;
+  let order: Order;
+  let showOrder = false;
 
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
@@ -54,12 +58,15 @@
       return async ({ result, update }) => {
         loading = false;
         if (result.type === "success") {
+          order = await result.data.order;
+          console.log(order);
           formElement.reset();
           showSuccess = true;
           menuCounter.fill(0);
           menuCounter = menuCounter;
           drinkCounter.fill(0);
           drinkCounter = drinkCounter;
+          showOrder = true;
           invalidateAll();
           setTimeout(() => {
             showSuccess = false;
@@ -327,6 +334,65 @@
 {/if}
 
 <div class="mt-10"></div>
+
+{#if showOrder}
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <div
+    class="absolute w-screen h-screen -top-24 left-0 z-10 bg-black bg-opacity-85"
+    on:keypress={() => {
+      showOrder = false;
+    }}
+    on:click={() => {
+      showOrder = false;
+    }}
+    role="alertdialog"
+    aria-modal="true"
+  >
+    <button
+      aria-label="close-order"
+      class=""
+      on:click={() => {
+        if (!e.target.closest(".order-container")) {
+          showOrder = false;
+        }
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        class="absolute fill-white h-10 w-10 top-12 right-12"
+      >
+        <path
+          d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+        />
+      </svg>
+    </button>
+    <a aria-label="close-order" class="" href={"/orders/" + order.id}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        class="absolute fill-white h-10 w-10 top-12 left-12"
+      >
+        <path
+          d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
+        />
+      </svg>
+    </a>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div
+      class="absolute z-75 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-screen order-container md:px-12 lg:px-56 xl:px-96"
+      on:click={(e) => e.stopPropagation()}
+      role="alertdialog"
+      aria-modal="true"
+    >
+      <Order {order} />
+    </div>
+  </div>
+{/if}
 
 {#if loading}
   <div

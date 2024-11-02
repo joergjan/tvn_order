@@ -2,20 +2,33 @@
   import { onMount } from "svelte";
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
-  import { fly } from "svelte/transition";
-  import { cubicOut } from "svelte/easing";
+  import { fade, fly } from "svelte/transition";
+  import { cubicOut, cubicIn, cubicInOut } from "svelte/easing";
   import { invalidateAll } from "$app/navigation";
+  import type { ActionResult } from "@sveltejs/kit";
 
   export let data: PageData;
   $: ({ order, tables, menus, drinks } = data);
 
-  let loading = false;
-  let showError = false;
-  let showSuccess = false;
-  let drinkCounter = Array(drinks?.length).fill(0);
-  let menuCounter = Array(menus?.length).fill(0);
+  let messageId = 0;
 
-  $: selectedTableId = order?.tableId;
+  interface Message {
+    id: number;
+    type: "success" | "error";
+    text: string;
+    flying: boolean;
+  }
+
+  let loading: boolean = false;
+  let drinkCounter: number[] = Array(drinks?.length).fill(0);
+  let menuCounter: number[] = Array(menus?.length).fill(0);
+  let tableForm: HTMLFormElement;
+  let nameForm: HTMLFormElement;
+  let menuForm: HTMLFormElement;
+  let drinkForm: HTMLFormElement;
+  let message: string = "";
+  let messages: Message[] = [];
+
   $: menus && calculateMenuCounter();
   $: drinks && calculateDrinkCounter();
 
@@ -62,69 +75,113 @@
       }
     }
   }
+
+  function showMessage(result: ActionResult, form: string) {
+    loading = true;
+
+    const messageText =
+      form === "table"
+        ? "Der Tisch wurde erfolgreich aktualisiert"
+        : form === "name"
+          ? "Der Name wurde erfolgreich aktualisiert"
+          : form === "menu"
+            ? "Die Menus wurden erfolgreich aktualisiert"
+            : form === "drink"
+              ? "Die Getränke wurden erfolgreich aktualisiert"
+              : "Unbekannt";
+
+    let newMessage: Message = {
+      id: messageId++,
+      type: result.type === "success" ? "success" : "error",
+      text: messageText,
+      flying: false,
+    };
+    console.log(messageId);
+    messages.push(newMessage);
+    messages = messages;
+
+    // Remove the message
+    setTimeout(() => {
+      messages = messages.filter((m) => m.id !== newMessage.id); // Use the ID to filter
+    }, 3500); // Time to display the message
+
+    invalidateAll();
+    loading = false;
+  }
 </script>
 
 {#if order && menus && drinks}
-  <h2>Bestellung {order.id} bearbeiten</h2>
+  <h2>Bestellung Nr. {order.id} bearbeiten</h2>
   <p class="mb-3">Bestellung erstellt von {order.user.username}</p>
 
   <div class="text-xl">
-    <form
-      action="?/updateOrder"
-      class=""
-      method="POST"
-      use:enhance={({ formElement, formData, action, cancel, submitter }) => {
-        // `formElement` is this `<form>` element
-        // `formData` is its `FormData` object that's about to be submitted
-        // `action` is the URL to which the form is posted
-        // calling `cancel()` will prevent the submission
-        // `submitter` is the `HTMLElement` that caused the form to be submitted
-        loading = true;
-
-        return async ({ result, update }) => {
-          loading = false;
-          if (result.type === "success") {
-            formElement.reset();
-            showSuccess = true;
-
-            setTimeout(() => {
-              showSuccess = false;
-            }, 3500);
-          } else {
-            showError = true;
-            formElement.reset();
-            setTimeout(() => {
-              showError = false;
-            }, 3500);
-          }
-          // `result` is an `ActionResult` object
-          // `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
-        };
-      }}
-    >
-      <div class="space-y-3">
+    <div class="space-y-3">
+      <form
+        action="?/updateTable"
+        method="POST"
+        bind:this={tableForm}
+        use:enhance={({}) => {
+          return async ({ result }) => {
+            showMessage(result, "table");
+          };
+        }}
+      >
         <div class="flex items-center">
           <div class="w-24">
             <label for="table" class="">Tisch</label>
           </div>
-          <select name="table" required bind:value={selectedTableId}>
+
+          <select
+            name="table"
+            required
+            value={order?.tableId}
+            on:change={() => tableForm.requestSubmit()}
+          >
             {#each tables ?? [] as table}
               <option value={table.id}>{table.name}</option>
             {/each}
           </select>
         </div>
+      </form>
 
+      <form
+        action="?/updateName"
+        method="POST"
+        bind:this={nameForm}
+        use:enhance={({}) => {
+          return async ({ result }) => {
+            showMessage(result, "name");
+          };
+        }}
+      >
         <div class="flex items-center">
           <div class="w-24">
             <label for="name">Name</label>
           </div>
-          <input type="text" id="name" name="name" bind:value={order.name} />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            bind:value={order.name}
+            on:change={() => nameForm.requestSubmit()}
+          />
         </div>
-      </div>
-      <div class="grid md:grid-cols-2">
-        <div class="mt-8">
-          <h3>Menus</h3>
+      </form>
+    </div>
+    <div class="grid md:grid-cols-2">
+      <div class="mt-8">
+        <h3>Menus</h3>
 
+        <form
+          action="?/updateMenus"
+          method="POST"
+          bind:this={menuForm}
+          use:enhance={({}) => {
+            return async ({ result }) => {
+              showMessage(result, "menu");
+            };
+          }}
+        >
           <ul class="space-y-5">
             {#each menus ?? [] as menu, i}
               <li class="flex space-x-3 justify-between md:justify-normal">
@@ -146,6 +203,10 @@
                         : ''} transition-all duration-200"
                       disabled={menuCounter[i] === 0}
                       type="button"
+                      on:click={() => {
+                        console.log("button was called");
+                        menuForm.requestSubmit();
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -181,6 +242,9 @@
                         increment(i, true);
                       }}
                       type="button"
+                      on:click={() => {
+                        menuForm.requestSubmit();
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -199,11 +263,22 @@
               </li>
             {/each}
           </ul>
-        </div>
+        </form>
+      </div>
 
-        <div class="mt-8">
-          <h3>Getränke</h3>
+      <div class="mt-8">
+        <h3>Getränke</h3>
 
+        <form
+          action="?/updateDrinks"
+          method="POST"
+          bind:this={drinkForm}
+          use:enhance={({}) => {
+            return async ({ result }) => {
+              showMessage(result, "drink");
+            };
+          }}
+        >
           <ul class="space-y-5">
             {#each drinks ?? [] as drink, i}
               <li class="flex space-x-3 justify-between md:justify-normal">
@@ -224,6 +299,9 @@
                         : ''} transition-all duration-200"
                       disabled={drinkCounter[i] === 0}
                       type="button"
+                      on:click={() => {
+                        drinkForm.requestSubmit();
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -259,6 +337,9 @@
                         ? 'hover:bg-gray-200'
                         : ''} transition-all duration-200"
                       type="button"
+                      on:click={() => {
+                        drinkForm.requestSubmit();
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -277,37 +358,32 @@
               </li>
             {/each}
           </ul>
-        </div>
+        </form>
       </div>
-      <div class="mt-10"></div>
-      <div class="flex justify-center">
-        <button
-          class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3"
-          type="submit"
-        >
-          <p class="group-hover:scale-105">Speichern</p>
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 {/if}
 
-{#if showSuccess || showError}
+<div
+  aria-live="assertive"
+  class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6 mt-16"
+>
   <div
-    aria-live="assertive"
-    class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6 mt-16"
+    class="flex w-full flex-col items-center space-y-4 sm:items-end message-transition duration-300 transition-transform"
   >
-    <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+    {#each messages as { id, type, text } (id)}
       <div
-        class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-md {showSuccess
+        class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-md {type ===
+        'success'
           ? 'bg-green-500'
-          : 'bg-red-500'} shadow-lg"
-        transition:fly={{ y: 250, duration: 350, easing: cubicOut }}
+          : 'bg-red-500'} shadow-lg ease-in-out"
+        in:fly={{ y: 250, duration: 300, easing: cubicOut }}
+        out:fade={{ duration: 300, easing: cubicOut }}
       >
         <div class="p-4">
           <div class="flex items-start">
             <div class="flex-shrink-0">
-              {#if showSuccess}
+              {#if type === "success"}
                 <svg
                   class="h-6 w-6 text-white"
                   fill="none"
@@ -339,17 +415,15 @@
             </div>
             <div class="ml-3 w-0 flex-1 pt-0.5">
               <p class="text-sm font-medium text-white">
-                {showSuccess
-                  ? "Bestellung erfolgreich erfasst!"
-                  : "Ein Fehler ist aufgetreten"}
+                {type === "success" ? text : "Ein Fehler ist aufgetreten"}
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    {/each}
   </div>
-{/if}
+</div>
 
 <div class="mt-10"></div>
 
