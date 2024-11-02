@@ -36,7 +36,7 @@
 </script>
 
 <form
-  action="?/fetchErrors"
+  action="/fetchErrors?/fetchErrors"
   use:enhance
   method="POST"
   bind:this={getErrors}

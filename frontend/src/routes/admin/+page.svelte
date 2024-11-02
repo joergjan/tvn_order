@@ -17,8 +17,6 @@
   let loading = false;
 </script>
 
-<Actions />
-
 <h1>Administration</h1>
 
 <ul class="flex justify-between space-x-1 border-gray-300 border-b">

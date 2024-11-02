@@ -38,8 +38,6 @@
   }
 </script>
 
-<Actions />
-
 <div class="text-xl">
   <form
     action="?/createOrder"

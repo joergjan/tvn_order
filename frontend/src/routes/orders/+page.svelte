@@ -22,8 +22,6 @@
   let loading = false;
 </script>
 
-<Actions />
-
 <h2>Bestellte Menus</h2>
 
 <div class="grid sm:grid-cols-2 sm:space-x-3">

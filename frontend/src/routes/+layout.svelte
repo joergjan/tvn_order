@@ -5,7 +5,7 @@
   import { fade, slide } from "svelte/transition";
   import type { LayoutData } from "./$types";
   import { onMount } from "svelte";
- 
+  import Actions from "./Actions.svelte";
 
   export let data: LayoutData;
   let open = false;
@@ -45,22 +45,21 @@
   }
 </script>
 
-
-
 <nav class="sticky top-0 z-10">
   {#if data.username}
-  {#if $error && $error.message}
-    <div transition:slide>
-      <div
-        class="bg-red-500 border text-white px-4 py-3 z-50 text-center"
-        role="alert"
-      >
-        <strong class="font-bold">Fehler!</strong>
-        <span class="block sm:inline">{$error.message}</span>
+    {#if $error && $error.message}
+      <div transition:slide>
+        <div
+          class="bg-red-500 border text-white px-4 py-3 z-50 text-center"
+          role="alert"
+        >
+          <strong class="font-bold">Fehler!</strong>
+          <span class="block sm:inline">{$error.message}</span>
+        </div>
       </div>
-    </div>
+      <Actions />
+    {/if}
   {/if}
-{/if}
   <div
     class="bg-white mx-auto max-w-7xl pt-2 pb-2 md:pb-0 px-4 sm:px-6 lg:px-8"
   >
