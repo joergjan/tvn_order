@@ -17,6 +17,12 @@
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
 
+  function calculateMenuCounter() {
+    for (var i = 0, j = order.orderedMenus.length; i < j; i++) {}
+  }
+
+  function calculateDrinkCounter() {}
+
   function increment(index: number, menu: boolean) {
     if (menu) {
       menuCounter[index]++;
