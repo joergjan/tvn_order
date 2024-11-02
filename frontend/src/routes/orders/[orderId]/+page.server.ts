@@ -98,26 +98,16 @@ export const actions: Actions = {
               id: Number(formData.table),
             },
           },
-          user: {
-            update: {
-              id: session.user.userId as string,
-            },
-          },
           orderedMenus: {
             update: {
               menuOrder: {
-                upsert: menuOrders.map(({ menuId, amount }) => ({
+                update: menuOrders.map(({ menuId, amount }) => ({
                   where: {
-                    menu: {
-                      id: Number(menuId),
-                    },
+                    menuId: Number(menuId), // Assuming you have a unique constraint on menuId
                   },
-                  menu: {
-                    update: {
-                      id: Number(menuId),
-                    },
+                  data: {
+                    amount: Number(amount), // Update the amount
                   },
-                  amount: Number(amount),
                 })),
               },
             },
@@ -125,18 +115,13 @@ export const actions: Actions = {
           orderedDrinks: {
             update: {
               drinkOrder: {
-                upsert: drinkOrders.map(({ drinkId, amount }) => ({
+                update: drinkOrders.map(({ drinkId, amount }) => ({
                   where: {
-                    drink: {
-                      id: Number(drinkId),
-                    },
+                    drinkId: Number(drinkId), // Assuming you have a unique constraint on drinkId
                   },
-                  drink: {
-                    update: {
-                      id: Number(drinkId),
-                    },
+                  data: {
+                    amount: Number(amount), // Update the amount
                   },
-                  amount: Number(amount),
                 })),
               },
             },
