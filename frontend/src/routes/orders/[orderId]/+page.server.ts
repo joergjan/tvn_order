@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
-  deleteOrder: async ({ request, locals }) => {
+  updateOrder: async ({ request, locals, params }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -68,36 +68,84 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    try {
-      await prismaClient.orderedMenus.delete({
-        where: { id: Number(formData.id) },
-      });
-    } catch (err) {
-      console.error("Error deleting order", err);
-      return fail(500, { message: "Failed to delete order" });
-    }
-  },
-  updateOrder: async ({ request, locals }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/");
-    }
+    // Extract menu and drink orders from formData
+    // Extract menu and drink orders from formData
+    const menuOrders = Object.keys(formData)
+      .filter((key) => key.startsWith("menuCount")) // no check for amount
+      .map((key) => ({
+        menuId: key.slice(9), // remove 'menuCount' prefix to get the ID
+        amount: Number(formData[key]), // convert to Number
+      }));
 
-    const formData = Object.fromEntries(await request.formData());
+    const drinkOrders = Object.keys(formData)
+      .filter((key) => key.startsWith("drinkCount")) // no check for amount
+      .map((key) => ({
+        drinkId: key.slice(10), // remove 'drinkCount' prefix to get the ID
+        amount: Number(formData[key]), // convert to Number
+      }));
+
+    let order: Order;
 
     try {
-      await prismaClient.order.update({
-        where: { id: Number(formData.id) },
+      order = await prismaClient.order.update({
+        where: {
+          id: Number(params.orderId),
+        },
         data: {
-          updatedOn: new Date(Date.now()),
+          name: (formData.name as string) || "",
           table: {
-            id: Number(formData.table),
+            update: {
+              id: Number(formData.table),
+            },
+          },
+          user: {
+            update: {
+              id: session.user.userId as string,
+            },
+          },
+          orderedMenus: {
+            update: {
+              menuOrder: {
+                upsert: menuOrders.map(({ menuId, amount }) => ({
+                  where: {
+                    menu: {
+                      id: Number(menuId),
+                    },
+                  },
+                  menu: {
+                    update: {
+                      id: Number(menuId),
+                    },
+                  },
+                  amount: Number(amount),
+                })),
+              },
+            },
+          },
+          orderedDrinks: {
+            update: {
+              drinkOrder: {
+                upsert: drinkOrders.map(({ drinkId, amount }) => ({
+                  where: {
+                    drink: {
+                      id: Number(drinkId),
+                    },
+                  },
+                  drink: {
+                    update: {
+                      id: Number(drinkId),
+                    },
+                  },
+                  amount: Number(amount),
+                })),
+              },
+            },
           },
         },
       });
     } catch (err) {
-      console.error("Error deleting order", err);
-      return fail(500, { message: "Failed to delete order" });
+      console.error("Error creating new Order:", err);
+      return fail(500, { message: "Failed to create new Order" });
     }
   },
 };

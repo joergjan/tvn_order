@@ -66,6 +66,7 @@
 
 {#if order && menus && drinks}
   <h2>Bestellung {order.id} bearbeiten</h2>
+  <p class="mb-3">Bestellung erstellt von {order.user.username}</p>
 
   <div class="text-xl">
     <form
