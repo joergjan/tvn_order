@@ -36,6 +36,7 @@
       document.body.style.margin = "";
       document.body.style.height = "";
       document.body.style.overflow = "";
+      document.body.scrollTo(0,0)
     }
   }
 
