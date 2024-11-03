@@ -18,10 +18,28 @@
   let showSuccess = false;
   let order: Order;
   let showOrder = false;
-  let tableId;
+  let tableId: number = 0;
+  let intervalId;
 
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
+
+  $: {
+    if (tableId === 0 && browser) {
+      intervalId = setInterval(getTableId, 500);
+    }
+    if (tableId > 0 && browser) {
+      clearInterval(intervalId);
+    }
+  }
+
+  function getTableId() {
+    const element = document.getElementById("tableId");
+    if (element) {
+      // Do something with the element, like updating its value or content
+      tableId = parseInt(element.value);
+    }
+  }
 
   function disableScroll() {
     if (browser) {
@@ -116,7 +134,7 @@
         <div class="w-24">
           <label for="table" class="">Tisch</label>
         </div>
-        <select name="table" required bind:value={tableId}>
+        <select name="table" required id="tableId">
           <option value="" disabled selected>wählen</option>
           {#each tables ?? [] as table}
             <option value={table.id}>{table.name}</option>
@@ -296,7 +314,7 @@
           ? 'bg-tvblue hover:bg-tvbluelight text-white group pointer-events-auto'
           : 'bg-gray-500 text-gray-400 pointer-events-none'} rounded-md py-2 px-3"
         type="submit"
-        disabled={tableId == null}
+        disabled={tableId === 0}
       >
         <p class="group-hover:scale-105">Speichern</p>
       </button>

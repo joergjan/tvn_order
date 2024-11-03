@@ -14,6 +14,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         id: session.user.userId,
       },
     },
+    orderBy: {
+      createdOn: "desc",
+    },
     include: {
       table: {
         select: {
@@ -64,6 +67,9 @@ export const load: PageServerLoad = async ({ locals }) => {
       user: {
         id: session.user.userId,
       },
+    },
+    orderBy: {
+      createdOn: "desc",
     },
     include: {
       table: {

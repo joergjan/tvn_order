@@ -15,12 +15,20 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     };
 
     const getMenus = async () => {
-      const menus = await prismaClient.menu.findMany({});
+      const menus = await prismaClient.menu.findMany({
+        orderBy: {
+          id: "asc",
+        },
+      });
       return menus;
     };
 
     const getDrinks = async () => {
-      const drinks = await prismaClient.drink.findMany({});
+      const drinks = await prismaClient.drink.findMany({
+        orderBy: {
+          id: "asc",
+        },
+      });
       return drinks;
     };
 

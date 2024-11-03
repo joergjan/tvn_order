@@ -11,6 +11,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     where: {
       printed: true,
     },
+    orderBy: {
+      createdOn: "desc",
+    },
     include: {
       table: {
         select: {
@@ -58,6 +61,9 @@ export const load: PageServerLoad = async ({ locals }) => {
   const unprintedOrders: Order[] = await prismaClient.order.findMany({
     where: {
       printed: false,
+    },
+    orderBy: {
+      createdOn: "desc",
     },
     include: {
       table: {
