@@ -5,7 +5,7 @@
   import { fade, fly } from "svelte/transition";
   import { cubicOut, cubicIn, cubicInOut } from "svelte/easing";
   import { invalidateAll } from "$app/navigation";
-  import type { ActionResult } from "@sveltejs/kit";
+  import { redirect, type ActionResult } from "@sveltejs/kit";
 
   export let data: PageData;
   $: ({ order, tables, menus, drinks } = data);
@@ -80,16 +80,9 @@
   function showMessage(result: ActionResult, form: string) {
     loading = true;
 
-    const messageText =
-      form === "table"
-        ? "Der Tisch wurde erfolgreich aktualisiert"
-        : form === "name"
-          ? "Der Name wurde erfolgreich aktualisiert"
-          : form === "menu"
-            ? "Die Menus wurden erfolgreich aktualisiert"
-            : form === "drink"
-              ? "Die Getränke wurden erfolgreich aktualisiert"
-              : "Unbekannt";
+    const messageText = result.data.message;
+
+    console.log(result);
 
     let newMessage: Message = {
       id: messageId++,
@@ -97,6 +90,7 @@
       text: messageText,
       flying: false,
     };
+
     console.log(messageId);
     messages.push(newMessage);
     messages = messages;
@@ -363,30 +357,29 @@
       </div>
     </div>
   </div>
+  <div class="my-5">
+    <form
+      action="?/updateComment"
+      method="POST"
+      bind:this={commentForm}
+      use:enhance={({}) => {
+        return async ({ result }) => {
+          showMessage(result, "spezialwunsch");
+        };
+      }}
+    >
+      <div class="">
+        <label for="comment" class="text-sm">Spezialwünsche</label>
+        <textarea
+          name="comment"
+          class="w-full"
+          bind:value={order.comment}
+          on:change={() => commentForm.requestSubmit()}
+        ></textarea>
+      </div>
+    </form>
+  </div>
 {/if}
-
-<div class="my-5">
-  <form
-    action="?/updateComment"
-    method="POST"
-    bind:this={commentForm}
-    use:enhance={({}) => {
-      return async ({ result }) => {
-        showMessage(result, "name");
-      };
-    }}
-  >
-    <div class="">
-      <label for="comment" class="text-sm">Spezialwünsche</label>
-      <textarea
-        name="comment"
-        class="w-full"
-        bind:value={order.comment}
-        on:change={() => commentForm.requestSubmit()}
-      ></textarea>
-    </div>
-  </form>
-</div>
 
 <div
   aria-live="assertive"
@@ -439,7 +432,7 @@
             </div>
             <div class="ml-3 w-0 flex-1 pt-0.5">
               <p class="text-sm font-medium text-white">
-                {type === "success" ? text : "Ein Fehler ist aufgetreten"}
+                {text}
               </p>
             </div>
           </div>

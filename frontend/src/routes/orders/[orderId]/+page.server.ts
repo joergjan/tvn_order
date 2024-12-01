@@ -78,7 +78,7 @@ export const actions: Actions = {
       });
     } catch (err) {
       console.error("Error finding Order:", err);
-      return fail(500, { message: "Failed to find Order" });
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden" });
     }
 
     if (!order.printed) {
@@ -95,12 +95,18 @@ export const actions: Actions = {
             },
           },
         });
+
+        return { success: true, message: "Tisch wurde aktualisiert" };
       } catch (err) {
         console.error("Error creating new Order:", err);
-        return fail(500, { message: "Failed to create new Order" });
+        return fail(500, {
+          message: "Tisch konnte nicht aktualisiert werden:",
+        });
       }
     } else {
-      return fail(500, { message: "Bestellung bereits gedruckt" });
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
     }
   },
   updateMenus: async ({ request, locals, params }) => {
@@ -128,7 +134,7 @@ export const actions: Actions = {
       });
     } catch (err) {
       console.error("Error finding Order:", err);
-      return fail(500, { message: "Failed to find Order" });
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden" });
     }
 
     if (!order.printed) {
@@ -155,12 +161,18 @@ export const actions: Actions = {
             },
           },
         });
+
+        return { success: true, message: "Menus wurden aktualisiert" };
       } catch (err) {
-        console.error("Error creating new Order:", err);
-        return fail(500, { message: "Failed to create new Order" });
+        console.error("Error updating menus:", err);
+        return fail(500, {
+          message: "Menus konnten nicht aktualisiert werden" + err,
+        });
       }
     } else {
-      return fail(500, { message: "Bestellung bereits gedruckt" });
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
     }
   },
   updateDrinks: async ({ request, locals, params }) => {
@@ -188,7 +200,7 @@ export const actions: Actions = {
       });
     } catch (err) {
       console.error("Error finding Order:", err);
-      return fail(500, { message: "Failed to find Order" });
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden" });
     }
 
     if (!order.printed) {
@@ -215,12 +227,18 @@ export const actions: Actions = {
             },
           },
         });
+
+        return { success: true, message: "Getränke wurden aktualisiert" };
       } catch (err) {
-        console.error("Error creating new Order:", err);
-        return fail(500, { message: "Failed to create new Order" });
+        console.error("Error updating drinks:", err);
+        return fail(500, {
+          message: "Getränke konnten nicht aktualisiert werden" + err,
+        });
       }
     } else {
-      return fail(500, { message: "Bestellung bereits gedruckt" });
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
     }
   },
   updateName: async ({ request, locals, params }) => {
@@ -241,7 +259,7 @@ export const actions: Actions = {
       });
     } catch (err) {
       console.error("Error finding Order:", err);
-      return fail(500, { message: "Failed to find Order" });
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden" });
     }
 
     if (!order.printed) {
@@ -255,12 +273,18 @@ export const actions: Actions = {
             name: (formData.name as string) || "",
           },
         });
+
+        return { success: true, message: "Name wurde aktualisiert" };
       } catch (err) {
-        console.error("Error creating new Order:", err);
-        return fail(500, { message: "Failed to create new Order" });
+        console.error("Error updating Name:", err);
+        return fail(500, {
+          message: "Name konnten nicht aktualisiert werden" + err,
+        });
       }
     } else {
-      return fail(500, { message: "Bestellung bereits gedruckt" });
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
     }
   },
   updateComment: async ({ request, locals, params }) => {
@@ -281,7 +305,7 @@ export const actions: Actions = {
       });
     } catch (err) {
       console.error("Error finding Order:", err);
-      return fail(500, { message: "Failed to find Order" });
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden" });
     }
 
     if (!order.printed) {
@@ -294,12 +318,18 @@ export const actions: Actions = {
             comment: (formData.comment as string) || "",
           },
         });
+
+        return { success: true, message: "Spezialwünsche wurden aktualisiert" };
       } catch (err) {
-        console.error("Error creating new Order:", err);
-        return fail(500, { message: "Failed to create new Order" });
+        console.error("Error updating comment: ", err);
+        return fail(500, {
+          message: "Spezialwünsche konnten nicht aktualisiert werden" + err,
+        });
       }
     } else {
-      return fail(500, { message: "Bestellung bereits gedruckt" });
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
     }
   },
 };
