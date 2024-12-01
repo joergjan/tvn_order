@@ -12,25 +12,33 @@ export const load: PageServerLoad = async ({ locals }) => {
 */
 
 export const actions: Actions = {
-    default: async ({ request }) => {
-        const { username, password } = Object.fromEntries(
-            await request.formData()
-        ) as Record<string, string>;
-        try {
-            await auth.createUser({
-                key: {
-                    providerId: "username",
-                    providerUserId: username,
-                    password,
-                },
-                attributes: {
-                    username,
-                },
-            });
-        } catch (err) {
-            console.error(err);
-            return fail(400, { message: "Could not register user" });
-        }
-        throw redirect(302, "/login");
-    },
+  default: async ({ request }) => {
+    const { username, password } = Object.fromEntries(
+      await request.formData()
+    ) as Record<string, string>;
+    try {
+      await auth.createUser({
+        key: {
+          providerId: "username",
+          providerUserId: username,
+          password,
+        },
+        attributes: {
+          username,
+        },
+      });
+
+      return { success: true, message: "Registrierung erfolgreich" };
+    } catch (err) {
+      console.error(err);
+
+      if (err.code == "P2002") {
+        return fail(400, {
+          message: "Dieser Benutzername exisiert bereits",
+        });
+      }
+
+      return fail(400, { message: "Could not register user" });
+    }
+  },
 };

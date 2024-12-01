@@ -27,7 +27,6 @@
   let menuForm: HTMLFormElement;
   let drinkForm: HTMLFormElement;
   let commentForm: HTMLFormElement;
-  let message: string = "";
   let messages: Message[] = [];
 
   $: menus && calculateMenuCounter();
