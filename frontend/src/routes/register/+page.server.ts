@@ -38,7 +38,9 @@ export const actions: Actions = {
         });
       }
 
-      return fail(400, { message: "Could not register user" });
+      return fail(400, {
+        message: "Registrierung nicht erfolgreich. Versuche es erneut",
+      });
     }
   },
 };
