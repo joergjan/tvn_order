@@ -9,11 +9,11 @@ from ping3 import ping
 async def print_orders(prisma):
     try:
         # Ping the printer to check if it's reachable
-        response = ping("192.168.1.148", timeout=2)
+        response = ping("192.168.178.50", timeout=2)
         if response is None:
             raise Exception("Printer not reachable")
 
-        receipt = Network("192.168.1.148", profile='TM-T20II')
+        receipt = Network("192.168.178.50", profile='TM-T20II')
         # Check if the printer is available by sending a simple command
 
     except Exception as e:
@@ -74,7 +74,7 @@ async def print_orders(prisma):
             adjusted_created_on = order.createdOn + timedelta(hours=2)
             formatted_time = adjusted_created_on.strftime("%H:%M")
 
-            if len(order.orderedMenus.menuOrder) > 0:
+            if len(order.orderedMenus.menuOrder) > 0 and any(menuOrder.amount > 0 for menuOrder in order.orderedMenus.menuOrder):
                 receipt.set(align='center')
                 # receipt.image("logo.png")
 
@@ -91,21 +91,25 @@ async def print_orders(prisma):
                 receipt.text("Menus:\n")
                 totalPrice = 0
                 for menuOrder in order.orderedMenus.menuOrder:
-                    receipt.text(f"{menuOrder.amount} x ")
-                    receipt.text(f"{menuOrder.menu.name}")
-                    receipt.text(f" à CHF {menuOrder.menu.price}")
-                    if menuOrder.amount > 1:
-                        receipt.text(
-                            f" / CHF {menuOrder.amount * menuOrder.menu.price}\n")
-                    else:
-                        receipt.text(f"\n")
-                    totalPrice += menuOrder.menu.price*menuOrder.amount
+                    if menuOrder.amount > 0:
+                        receipt.text(f"{menuOrder.amount} x ")
+                        receipt.text(f"{menuOrder.menu.name}")
+                        receipt.text(f" à CHF {menuOrder.menu.price}")
+                        if menuOrder.amount > 1:
+                            receipt.text(
+                                f" / CHF {menuOrder.amount * menuOrder.menu.price}\n")
+                        else:
+                            receipt.text(f"\n")
+                        totalPrice += menuOrder.menu.price*menuOrder.amount
+
+                if order.comment != "":
+                    receipt.text(f"\nSpezialwunsch: {order.comment}\n")
 
                 receipt.text(f"\nTotal: CHF {totalPrice}")
 
                 receipt.cut()
 
-            if len(order.orderedDrinks.drinkOrder) > 0:
+            if len(order.orderedDrinks.drinkOrder) > 0 and any(drinkOrder.amount > 0 for drinkOrder in order.orderedDrinks.drinkOrder):
                 receipt.set(align='center')
                 # receipt.image("/logo.png")
 
@@ -122,15 +126,16 @@ async def print_orders(prisma):
                 receipt.ln(2)
                 receipt.text("Getränke:\n")
                 for drinkOrder in order.orderedDrinks.drinkOrder:
-                    receipt.text(f"{drinkOrder.amount} x ")
-                    receipt.text(f"{drinkOrder.drink.name}")
-                    receipt.text(f" à CHF {drinkOrder.drink.price}")
-                    if drinkOrder.amount > 1:
-                        receipt.text(
-                            f" / CHF {drinkOrder.amount * drinkOrder.drink.price}\n")
-                    else:
-                        receipt.text(f"\n")
-                    totalPrice += drinkOrder.drink.price*drinkOrder.amount
+                    if drinkOrder.amount > 0:
+                        receipt.text(f"{drinkOrder.amount} x ")
+                        receipt.text(f"{drinkOrder.drink.name}")
+                        receipt.text(f" à CHF {drinkOrder.drink.price}")
+                        if drinkOrder.amount > 1:
+                            receipt.text(
+                                f" / CHF {drinkOrder.amount * drinkOrder.drink.price}\n")
+                        else:
+                            receipt.text(f"\n")
+                        totalPrice += drinkOrder.drink.price*drinkOrder.amount
 
                 receipt.text(f"\nTotal: CHF {totalPrice}")
 

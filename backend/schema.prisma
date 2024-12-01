@@ -26,6 +26,7 @@ model Order {
   updatedOn     DateTime?
   orderedDrinks OrderedDrinks?
   orderedMenus  OrderedMenus?
+  comment       String?
 }
 
 model Menu {

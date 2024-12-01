@@ -50,6 +50,7 @@ export const actions: Actions = {
               id: session.user.userId as string,
             },
           },
+          comment: (formData.comment as string) || "",
           orderedMenus: {
             create: {
               menuOrder: {

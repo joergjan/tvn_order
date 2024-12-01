@@ -226,6 +226,11 @@
               </div>
             </li>
           {/each}
+
+          <li>
+            <label for="comment" class="text-sm">Spezialwünsche</label>
+            <textarea name="comment" class="w-full"></textarea>
+          </li>
         </ul>
       </div>
 

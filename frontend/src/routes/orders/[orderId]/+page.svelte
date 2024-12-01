@@ -26,6 +26,7 @@
   let nameForm: HTMLFormElement;
   let menuForm: HTMLFormElement;
   let drinkForm: HTMLFormElement;
+  let commentForm: HTMLFormElement;
   let message: string = "";
   let messages: Message[] = [];
 
@@ -363,6 +364,29 @@
     </div>
   </div>
 {/if}
+
+<div class="my-5">
+  <form
+    action="?/updateComment"
+    method="POST"
+    bind:this={commentForm}
+    use:enhance={({}) => {
+      return async ({ result }) => {
+        showMessage(result, "name");
+      };
+    }}
+  >
+    <div class="">
+      <label for="comment" class="text-sm">Spezialwünsche</label>
+      <textarea
+        name="comment"
+        class="w-full"
+        bind:value={order.comment}
+        on:change={() => commentForm.requestSubmit()}
+      ></textarea>
+    </div>
+  </form>
+</div>
 
 <div
   aria-live="assertive"

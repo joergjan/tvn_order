@@ -85,10 +85,6 @@
               </div>
             {/if}
           {/each}
-          <div class="flex justify-between">
-            <p>Total Menus</p>
-            <p>{totalMenuOrderPrice}</p>
-          </div>
         </li>
       {/if}
       {#if order?.orderedDrinks?.drinkOrder.some((drinkOrder) => drinkOrder.amount > 0)}
@@ -116,6 +112,11 @@
         </li>
       {/if}
     </ul>
+    {#if order.comment}
+      <p class="text-md font-medium my-5">
+        Spezialwunsch: {order.comment}
+      </p>
+    {/if}
     <div class="flex justify-between font-semibold text-xl mt-3">
       <p>Total</p>
       <p>CHF {totalPrice}</p>

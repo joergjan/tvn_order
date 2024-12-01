@@ -71,21 +71,36 @@ export const actions: Actions = {
     let order: Order;
 
     try {
-      order = await prismaClient.order.update({
+      order = await prismaClient.order.findUnique({
         where: {
           id: Number(params.orderId),
         },
-        data: {
-          table: {
-            connect: {
-              id: Number(formData.table),
-            },
-          },
-        },
       });
     } catch (err) {
-      console.error("Error creating new Order:", err);
-      return fail(500, { message: "Failed to create new Order" });
+      console.error("Error finding Order:", err);
+      return fail(500, { message: "Failed to find Order" });
+    }
+
+    if (!order.printed) {
+      try {
+        order = await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
+            table: {
+              connect: {
+                id: Number(formData.table),
+              },
+            },
+          },
+        });
+      } catch (err) {
+        console.error("Error creating new Order:", err);
+        return fail(500, { message: "Failed to create new Order" });
+      }
+    } else {
+      return fail(500, { message: "Bestellung bereits gedruckt" });
     }
   },
   updateMenus: async ({ request, locals, params }) => {
@@ -106,31 +121,46 @@ export const actions: Actions = {
     let order: Order;
 
     try {
-      order = await prismaClient.order.update({
+      order = await prismaClient.order.findUnique({
         where: {
           id: Number(params.orderId),
         },
-        data: {
-          orderedMenus: {
-            update: {
-              menuOrder: {
-                deleteMany: {},
-                create: menuOrders.map(({ menuId, amount }) => ({
-                  menu: {
-                    connect: {
-                      id: Number(menuId),
+      });
+    } catch (err) {
+      console.error("Error finding Order:", err);
+      return fail(500, { message: "Failed to find Order" });
+    }
+
+    if (!order.printed) {
+      try {
+        order = await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
+            orderedMenus: {
+              update: {
+                menuOrder: {
+                  deleteMany: {},
+                  create: menuOrders.map(({ menuId, amount }) => ({
+                    menu: {
+                      connect: {
+                        id: Number(menuId),
+                      },
                     },
-                  },
-                  amount: Number(amount),
-                })),
+                    amount: Number(amount),
+                  })),
+                },
               },
             },
           },
-        },
-      });
-    } catch (err) {
-      console.error("Error creating new Order:", err);
-      return fail(500, { message: "Failed to create new Order" });
+        });
+      } catch (err) {
+        console.error("Error creating new Order:", err);
+        return fail(500, { message: "Failed to create new Order" });
+      }
+    } else {
+      return fail(500, { message: "Bestellung bereits gedruckt" });
     }
   },
   updateDrinks: async ({ request, locals, params }) => {
@@ -151,31 +181,46 @@ export const actions: Actions = {
     let order: Order;
 
     try {
-      order = await prismaClient.order.update({
+      order = await prismaClient.order.findUnique({
         where: {
           id: Number(params.orderId),
         },
-        data: {
-          orderedDrinks: {
-            update: {
-              drinkOrder: {
-                deleteMany: {},
-                create: drinkOrders.map(({ drinkId, amount }) => ({
-                  drink: {
-                    connect: {
-                      id: Number(drinkId),
+      });
+    } catch (err) {
+      console.error("Error finding Order:", err);
+      return fail(500, { message: "Failed to find Order" });
+    }
+
+    if (!order.printed) {
+      try {
+        order = await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
+            orderedDrinks: {
+              update: {
+                drinkOrder: {
+                  deleteMany: {},
+                  create: drinkOrders.map(({ drinkId, amount }) => ({
+                    drink: {
+                      connect: {
+                        id: Number(drinkId),
+                      },
                     },
-                  },
-                  amount: Number(amount),
-                })),
+                    amount: Number(amount),
+                  })),
+                },
               },
             },
           },
-        },
-      });
-    } catch (err) {
-      console.error("Error creating new Order:", err);
-      return fail(500, { message: "Failed to create new Order" });
+        });
+      } catch (err) {
+        console.error("Error creating new Order:", err);
+        return fail(500, { message: "Failed to create new Order" });
+      }
+    } else {
+      return fail(500, { message: "Bestellung bereits gedruckt" });
     }
   },
   updateName: async ({ request, locals, params }) => {
@@ -189,17 +234,72 @@ export const actions: Actions = {
     let order: Order;
 
     try {
-      order = await prismaClient.order.update({
+      order = await prismaClient.order.findUnique({
         where: {
           id: Number(params.orderId),
         },
-        data: {
-          name: (formData.name as string) || "",
+      });
+    } catch (err) {
+      console.error("Error finding Order:", err);
+      return fail(500, { message: "Failed to find Order" });
+    }
+
+    if (!order.printed) {
+      console.log("works");
+      try {
+        order = await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
+            name: (formData.name as string) || "",
+          },
+        });
+      } catch (err) {
+        console.error("Error creating new Order:", err);
+        return fail(500, { message: "Failed to create new Order" });
+      }
+    } else {
+      return fail(500, { message: "Bestellung bereits gedruckt" });
+    }
+  },
+  updateComment: async ({ request, locals, params }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    let order: Order;
+
+    try {
+      order = await prismaClient.order.findUnique({
+        where: {
+          id: Number(params.orderId),
         },
       });
     } catch (err) {
-      console.error("Error creating new Order:", err);
-      return fail(500, { message: "Failed to create new Order" });
+      console.error("Error finding Order:", err);
+      return fail(500, { message: "Failed to find Order" });
+    }
+
+    if (!order.printed) {
+      try {
+        order = await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
+            comment: (formData.comment as string) || "",
+          },
+        });
+      } catch (err) {
+        console.error("Error creating new Order:", err);
+        return fail(500, { message: "Failed to create new Order" });
+      }
+    } else {
+      return fail(500, { message: "Bestellung bereits gedruckt" });
     }
   },
 };
