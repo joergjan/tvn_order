@@ -76,7 +76,7 @@ async def print_orders(prisma):
 
             if len(order.orderedMenus.menuOrder) > 0 and any(menuOrder.amount > 0 for menuOrder in order.orderedMenus.menuOrder):
                 receipt.set(align='center')
-                # receipt.image("logo.png")
+                receipt.image("logo.png")
 
                 receipt.text(f"\nBestellung Nr {order.id}\n")
                 receipt.text(f"Bedienung: {order.user.username}\n")
@@ -111,7 +111,7 @@ async def print_orders(prisma):
 
             if len(order.orderedDrinks.drinkOrder) > 0 and any(drinkOrder.amount > 0 for drinkOrder in order.orderedDrinks.drinkOrder):
                 receipt.set(align='center')
-                # receipt.image("/logo.png")
+                receipt.image("/logo.png")
 
                 receipt.text(f"\nBestellung Nr {order.id}\n")
                 receipt.text(f"Bedienung: {order.user.username}\n")
