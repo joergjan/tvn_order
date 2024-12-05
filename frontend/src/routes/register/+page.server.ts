@@ -13,15 +13,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
   default: async ({ request }) => {
-    const { username, password } = Object.fromEntries(
-      await request.formData()
-    ) as Record<string, string>;
+    const { username } = Object.fromEntries(await request.formData()) as Record<
+      string,
+      string
+    >;
     try {
       await auth.createUser({
         key: {
           providerId: "username",
           providerUserId: username,
-          password,
+          password: username,
         },
         attributes: {
           username,

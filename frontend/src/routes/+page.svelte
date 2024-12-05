@@ -20,6 +20,7 @@
   let showOrder = false;
   let tableId: number = 0;
   let intervalId;
+  let totalAmount: number = 0;
 
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
@@ -73,6 +74,8 @@
     } else {
       drinkCounter[index]++;
     }
+
+    calculateTotalAmount();
   }
 
   function decrement(index: number, menu: boolean) {
@@ -85,10 +88,37 @@
         drinkCounter[index]--;
       }
     }
+
+    calculateTotalAmount();
+  }
+
+  function calculateTotalAmount() {
+    let temporaryTotal = 0;
+
+    for (var i = 0; i < menus?.length; i++) {
+      if (menuCounter[i] > 0) {
+        temporaryTotal += menus[i].price * menuCounter[i];
+      }
+    }
+
+    for (var j = 0; j < drinks?.length; j++) {
+      if (drinkCounter[j] > 0) {
+        temporaryTotal += drinks[j].price * drinkCounter[j];
+      }
+    }
+
+    totalAmount = temporaryTotal;
   }
 </script>
 
-<div class="text-xl">
+<div class="text-xl relative">
+  {#if !showOrder}
+    <div
+      class="fixed top-15 right-2 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
+    >
+      <p>Total: CHF {totalAmount}</p>
+    </div>
+  {/if}
   <form
     action="?/createOrder"
     class=""

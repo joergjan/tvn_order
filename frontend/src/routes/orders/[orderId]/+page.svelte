@@ -28,9 +28,11 @@
   let drinkForm: HTMLFormElement;
   let commentForm: HTMLFormElement;
   let messages: Message[] = [];
+  let totalAmount: number = 0;
 
   $: menus && calculateMenuCounter();
   $: drinks && calculateDrinkCounter();
+  $: drinks && calculateTotalAmount();
 
   function calculateMenuCounter() {
     if (order && menus) {
@@ -102,11 +104,35 @@
     invalidateAll();
     loading = false;
   }
+
+  function calculateTotalAmount() {
+    let temporaryTotal = 0;
+
+    for (var i = 0; i < menus?.length; i++) {
+      if (menuCounter[i] > 0) {
+        temporaryTotal += menus[i].price * menuCounter[i];
+      }
+    }
+
+    for (var j = 0; j < drinks?.length; j++) {
+      if (drinkCounter[j] > 0) {
+        temporaryTotal += drinks[j].price * drinkCounter[j];
+      }
+    }
+
+    totalAmount = temporaryTotal;
+  }
 </script>
 
 {#if order && menus && drinks}
   <h2>Bestellung Nr. {order.id} bearbeiten</h2>
   <p class="mb-3">Bestellung erstellt von {order.user.username}</p>
+
+  <div
+    class="fixed top-15 right-2 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
+  >
+    <p>Total: CHF {totalAmount}</p>
+  </div>
 
   <div class="text-xl">
     <div class="space-y-3">

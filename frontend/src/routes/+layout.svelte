@@ -81,25 +81,42 @@
         </a>
       </div>
       <div class="hidden md:ml-6 md:flex md:space-x-8">
-        {#each titles as title, i}
-          {#if data.isAdmin && title.admin}
-            <a
-              href={title.href}
-              class={$currentPage === i
-                ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
-                : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
-              on:click={() => ($currentPage = i)}>{title.name}</a
-            >
-          {:else if !title.admin}
-            <a
-              href={title.href}
-              class={$currentPage === i
-                ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
-                : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
-              on:click={() => ($currentPage = i)}>{title.name}</a
-            >
-          {/if}
-        {/each}
+        {#if data.username}
+          {#each titles as title, i}
+            {#if data.isAdmin && title.admin}
+              <a
+                href={title.href}
+                class={$currentPage === i
+                  ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+                  : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+                on:click={() => ($currentPage = i)}>{title.name}</a
+              >
+            {:else if !title.admin}
+              <a
+                href={title.href}
+                class={$currentPage === i
+                  ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+                  : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+                on:click={() => ($currentPage = i)}>{title.name}</a
+              >
+            {/if}
+          {/each}
+        {:else}
+          <a
+            href="/login"
+            class={$currentPage === 0
+              ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+              : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+            on:click={() => ($currentPage = 0)}>Login</a
+          >
+          <a
+            href="/register"
+            class={$currentPage === 1
+              ? "inline-flex items-center border-b-2  border-tvblue  text-gray-700 px-1 pt-1 font-medium"
+              : "inline-flex items-center border-b-2 border-transparent  text-gray-500 hover:border-tvblue  hover:text-gray-700  px-1 pt-1 font-medium hover:transition-all hover:duration-[600ms]"}
+            on:click={() => ($currentPage = 1)}>Registrieren</a
+          >
+        {/if}
         {#if data.username}
           <div class="flex justify-center items-center mm-3">
             <button
@@ -166,14 +183,38 @@
   {#if open}
     <div transition:fade class="md:hidden absolute bg-white w-full h-screen">
       <div class="mt-2 space-y-1">
-        {#each titles as title, i}
+        {#if data.username}
+          {#each titles as title, i}
+            {#if data.isAdmin && title.admin}
+              <a
+                href={title.href}
+                class="block px-4 py-2 hover place-content-end hover:bg-gray-100"
+                on:click={menuToggle}
+                on:click={() => ($currentPage = i)}>{title.name}</a
+              >
+            {:else if !title.admin}
+              <a
+                href={title.href}
+                class="block px-4 py-2 hover place-content-end hover:bg-gray-100"
+                on:click={menuToggle}
+                on:click={() => ($currentPage = i)}>{title.name}</a
+              >
+            {/if}
+          {/each}
+        {:else}
           <a
-            href={title.href}
+            href="/login"
             class="block px-4 py-2 hover place-content-end hover:bg-gray-100"
             on:click={menuToggle}
-            on:click={() => ($currentPage = i)}>{title.name}</a
+            on:click={() => ($currentPage = 0)}>Login</a
           >
-        {/each}
+          <a
+            href="/register"
+            class="block px-4 py-2 hover place-content-end hover:bg-gray-100"
+            on:click={menuToggle}
+            on:click={() => ($currentPage = 1)}>Registrieren</a
+          >
+        {/if}
         {#if data.username}
           <div class="flex ml-3">
             <button

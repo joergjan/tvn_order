@@ -67,16 +67,13 @@
     };
   }}
 >
-  <h2>Register</h2>
+  <h2>Registrieren</h2>
 
   <div class="flex justify-between items-center">
     <label for="username">Benutzername</label>
     <input type="text" id="username" name="username" required />
   </div>
-  <div class="flex justify-between items-center">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required />
-  </div>
+
   <button
     type="submit"
     class="bg-tvblue hover:bg-tvbluelight px-3 py-2 rounded-md text-white group"

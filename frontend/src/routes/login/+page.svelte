@@ -76,11 +76,6 @@
     <input type="username" id="username" name="username" required />
   </div>
 
-  <div class="flex justify-between items-center">
-    <label for="password" class="mr-3">Password</label>
-    <input type="password" id="password" name="password" required />
-  </div>
-
   <button
     type="submit"
     class="mt-5 group bg-tvblue text-white py-2 px-3 hover:bg-tvbluelight rounded-md"
