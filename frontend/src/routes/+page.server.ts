@@ -114,10 +114,17 @@ export const actions: Actions = {
         },
       });
 
-      return { order: order };
+      return {
+        success: true,
+        order: order,
+        message: "Bestellung erfolgreich erstellt",
+      };
+      return {};
     } catch (err) {
       console.error("Error creating new Order:", err);
-      return fail(500, { message: "Failed to create new Order" });
+      return fail(500, {
+        message: "Fehler: Bestellung konnte nicht gespeichert werden",
+      });
     }
   },
 };
