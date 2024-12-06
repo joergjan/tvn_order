@@ -31,11 +31,16 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.table.create({
+      const table = await prismaClient.table.create({
         data: {
           name: (formData.name as string) || "",
         },
       });
+
+      return {
+        success: true,
+        message: `Tisch ${table.name} erfasst`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -50,12 +55,17 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.table.update({
+      const table = await prismaClient.table.update({
         where: { id: Number(formData.id) },
         data: {
           name: (formData.name as string) || "",
         },
       });
+
+      return {
+        success: true,
+        message: `Tisch ${table.name} aktualisiert`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -70,9 +80,14 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.table.delete({
+      const table = await prismaClient.table.delete({
         where: { id: Number(formData.id) },
       });
+
+      return {
+        success: true,
+        message: `Tisch ${table.name} wurde wurde gelöscht`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -89,12 +104,16 @@ export const actions: Actions = {
     const id = formData.id as string;
 
     try {
-      await prismaClient.user.update({
+      const user = await prismaClient.user.update({
         where: { id: id },
         data: {
           isAdmin: formData.isAdmin === "on",
         },
       });
+      return {
+        success: true,
+        message: `Benutzer ${user.username} aktualisiert`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -110,9 +129,14 @@ export const actions: Actions = {
     const id = formData.id as string;
 
     try {
-      await prismaClient.user.delete({
+      const user = await prismaClient.user.delete({
         where: { id: id },
       });
+
+      return {
+        success: true,
+        message: `Benutzer ${user.username} wurde gelöscht`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -127,12 +151,17 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.drink.create({
+      const drink = await prismaClient.drink.create({
         data: {
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },
       });
+
+      return {
+        success: true,
+        message: `Getränk ${drink.name} erfasst`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -149,13 +178,18 @@ export const actions: Actions = {
     console.log(formData);
 
     try {
-      await prismaClient.drink.update({
+      const drink = await prismaClient.drink.update({
         where: { id: Number(formData.id) },
         data: {
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },
       });
+
+      return {
+        success: true,
+        message: `Getränk ${drink.name} aktualisiert`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -170,9 +204,14 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.drink.delete({
+      const drink = await prismaClient.drink.delete({
         where: { id: Number(formData.id) },
       });
+
+      return {
+        success: true,
+        message: `Getränk ${drink.name} wurde gelöscht`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -187,12 +226,17 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.menu.create({
+      const menu = await prismaClient.menu.create({
         data: {
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },
       });
+
+      return {
+        success: true,
+        message: `Menu ${menu.name} erfasst`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });
@@ -207,13 +251,18 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.menu.update({
+      const menu = await prismaClient.menu.update({
         where: { id: Number(formData.id) },
         data: {
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },
       });
+
+      return {
+        success: true,
+        message: `Menu ${menu.name} aktualisiert`,
+      };
     } catch (e) {
       console.error("Failed to update drink" + e);
       return fail(500, { message: "Failed to update drink" });
@@ -228,9 +277,14 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     try {
-      await prismaClient.menu.delete({
+      const menu = await prismaClient.menu.delete({
         where: { id: Number(formData.id) },
       });
+
+      return {
+        success: true,
+        message: `Menu ${menu.name} wurde gelöscht`,
+      };
     } catch (e) {
       console.error("Failed to create new Table" + e);
       return fail(500, { message: "Failed to create new Table" });

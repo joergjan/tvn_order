@@ -3,11 +3,15 @@
   import { enhance } from "$app/forms";
   import type { PageData } from "../$types";
   import Actions from "../Actions.svelte";
+  import Message from "$lib/components/Message.svelte";
+  import Loader from "$lib/components/Loader.svelte";
+  import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { users: any };
   $: ({ users, tables, userId, drinks, menus } = data);
 
   let selectedMenuItem: "Menu" | "Getränke" | "Tische" | "Benutzer" = "Menu";
+  let messageComponent;
 
   let updateTableForm: HTMLFormElement[] = [];
   let updateMenuForm: HTMLFormElement[] = [];
@@ -16,6 +20,10 @@
 
   let loading = false;
 </script>
+
+<Message bind:this={messageComponent} />
+
+<Loader {loading} />
 
 <h1>Administration</h1>
 
@@ -79,7 +87,14 @@
       action="?/createMenu"
       class="flex space-x-2"
       method="POST"
-      use:enhance
+      use:enhance={({}) => {
+        loading = true;
+
+        return async ({ result }) => {
+          messageComponent.showMessage(result);
+          loading = false;
+        };
+      }}
     >
       <div class="block">
         <label for="name">Neues Menu</label>
@@ -115,7 +130,14 @@
             action="?/updateMenu"
             method="POST"
             class="flex space-x-2"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
             bind:this={updateMenuForm[i]}
           >
             <div>
@@ -158,7 +180,14 @@
             action="?/deleteMenu"
             class="place-content-end"
             method="POST"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
           >
             <input
               hidden
@@ -199,7 +228,14 @@
       action="?/createDrink"
       class="flex space-x-2"
       method="POST"
-      use:enhance
+      use:enhance={({}) => {
+        loading = true;
+
+        return async ({ result }) => {
+          messageComponent.showMessage(result);
+          loading = false;
+        };
+      }}
     >
       <div class="block">
         <label for="name">Neues Getränk</label>
@@ -229,7 +265,14 @@
             action="?/updateDrink"
             method="POST"
             class="flex space-x-2"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
             bind:this={updateDrinkForm[i]}
           >
             <div>
@@ -272,7 +315,14 @@
             action="?/deleteDrink"
             class="place-content-end"
             method="POST"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
           >
             <input
               hidden
@@ -309,7 +359,19 @@
   <div>
     <h2>Tisch erfassen</h2>
 
-    <form action="?/createTable" class="space-y-2" method="POST" use:enhance>
+    <form
+      action="?/createTable"
+      class="space-y-2"
+      method="POST"
+      use:enhance={({}) => {
+        loading = true;
+
+        return async ({ result }) => {
+          messageComponent.showMessage(result);
+          loading = false;
+        };
+      }}
+    >
       <label for="name">Tischname</label>
       <input
         type="text"
@@ -333,7 +395,14 @@
           <form
             action="?/updateTable"
             method="POST"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
             bind:this={updateTableForm[i]}
           >
             <input hidden type="Number" bind:value={table.id} name="id" />
@@ -350,7 +419,14 @@
           <form
             action="?/deleteTable"
             method="POST"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
             class="place-content-end"
           >
             <input
@@ -399,7 +475,14 @@
           <form
             action="?/updateUser"
             method="POST"
-            use:enhance
+            use:enhance={({}) => {
+              loading = true;
+
+              return async ({ result }) => {
+                messageComponent.showMessage(result);
+                loading = false;
+              };
+            }}
             class="col-span-2 grid grid-cols-2"
             bind:this={updateUserForm[i]}
           >
@@ -426,7 +509,18 @@
             </div>
           </form>
           <div class="justify-end flex">
-            <form action="?/deleteUser" method="POST" use:enhance>
+            <form
+              action="?/deleteUser"
+              method="POST"
+              use:enhance={({}) => {
+                loading = true;
+
+                return async ({ result }) => {
+                  messageComponent.showMessage(result);
+                  loading = false;
+                };
+              }}
+            >
               <input
                 hidden
                 type="text"
