@@ -22,6 +22,31 @@ export const actions: Actions = {
       return fail(500, { message: "Bestellung konnte nicht gelöscht werden." });
     }
   },
+  changePrintStatus: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      await prismaClient.order.update({
+        where: { id: Number(formData.id) },
+        data: {
+          printed: true,
+        },
+      });
+
+      return { success: true, message: "Bestellstatus wurde geändert." };
+    } catch (err) {
+      console.error("Error deleting order", err);
+      return fail(500, {
+        message: "Bestellstatus konnte nicht geändert werden.",
+      });
+    }
+  },
+
   searchOrder: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
@@ -31,22 +56,20 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
 
     const tableid = Number(formData.tableid) || null;
-    const username = (formData.username as string) || null;
-    const printed: boolean = Boolean(formData.printed) || false;
+    const userid = (formData.userid as string) || null;
 
     let orders;
 
     try {
-      if (tableid && username) {
+      if (tableid && userid) {
         orders = await prismaClient.order.findMany({
           where: {
             user: {
-              username: username,
+              id: userid,
             },
             table: {
               id: tableid,
             },
-            printed: printed,
           },
           include: {
             table: {
@@ -87,7 +110,6 @@ export const actions: Actions = {
             table: {
               id: tableid,
             },
-            printed: printed,
           },
           include: {
             table: {
@@ -122,13 +144,12 @@ export const actions: Actions = {
             },
           },
         });
-      } else if (username) {
+      } else if (userid) {
         orders = await prismaClient.order.findMany({
           where: {
             user: {
-              username: username,
+              id: userid,
             },
-            printed: printed,
           },
           include: {
             table: {
@@ -165,9 +186,6 @@ export const actions: Actions = {
         });
       } else {
         orders = await prismaClient.order.findMany({
-          where: {
-            printed: printed,
-          },
           include: {
             table: {
               select: {
