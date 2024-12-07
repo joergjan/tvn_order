@@ -8,7 +8,7 @@
   import Loader from "$lib/components/Loader.svelte";
 
   export let data: PageData & { users: any };
-  $: ({ tables, users } = data);
+  $: ({ tables, users, username } = data);
 
   let messageComponent;
   let searchForm: HTMLFormElement;
@@ -16,6 +16,7 @@
   let loading: boolean = false;
   let tableIndex: number = 0;
   let userIndex: number = 0;
+  let selectedUser: string = "";
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -28,7 +29,16 @@
   });
 
   onMount(() => {
-    searchForm.requestSubmit();
+    for (var i = 0; i < users.length; i++) {
+      if ((users[i].username = username)) {
+        selectedUser = users[i].id;
+
+        userIndex = 1;
+      }
+    }
+    setTimeout(() => {
+      searchForm.requestSubmit();
+    }, 200);
   });
 </script>
 
@@ -107,6 +117,7 @@
       <div class="flex space-x-2">
         <select
           class="w-32"
+          bind:value={selectedUser}
           id="userid"
           name="userid"
           on:change={() => {
