@@ -6,6 +6,7 @@
   import { invalidateAll } from "$app/navigation";
   import Message from "$lib/components/Message.svelte";
   import Loader from "$lib/components/Loader.svelte";
+  import checkIfEditAllowed from "$lib/scripts/order";
 
   export let data: PageData & { users: any };
   $: ({ tables, users, username } = data);
@@ -30,7 +31,7 @@
 
   onMount(() => {
     for (var i = 0; i < users.length; i++) {
-      if ((users[i].username = username)) {
+      if (users[i].username == username) {
         selectedUser = users[i].id;
 
         userIndex = 1;
@@ -164,7 +165,7 @@
 <br />
 
 <h3>Bestellungen</h3>
-<div class="grid md:grid-cols-2">
+<div class="grid md:grid-cols-2 gap-3">
   {#if orders?.length >= 1 && tables?.length >= 1}
     <div>
       <br />
@@ -176,7 +177,7 @@
             <li class="relative">
               <Order {order} />
 
-              {#if !order.printed}
+              {#if checkIfEditAllowed(order)}
                 <div class="absolute top-2 left-2">
                   <form
                     action="?/deleteOrder"
@@ -307,7 +308,7 @@
       <br />
 
       <h4>Gedruckt</h4>
-      <ul>
+      <ul class="">
         {#each orders as order, i}
           {#if order.printed}
             <Order {order} />
