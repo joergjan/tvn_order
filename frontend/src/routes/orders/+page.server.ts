@@ -71,6 +71,9 @@ export const actions: Actions = {
               id: tableid,
             },
           },
+          orderBy: {
+            updatedOn: "desc",
+          },
           include: {
             table: {
               select: {
@@ -110,6 +113,9 @@ export const actions: Actions = {
             table: {
               id: tableid,
             },
+          },
+          orderBy: {
+            createdOn: "desc",
           },
           include: {
             table: {
@@ -151,6 +157,9 @@ export const actions: Actions = {
               id: userid,
             },
           },
+          orderBy: {
+            createdOn: "desc",
+          },
           include: {
             table: {
               select: {
@@ -186,6 +195,9 @@ export const actions: Actions = {
         });
       } else {
         orders = await prismaClient.order.findMany({
+          orderBy: {
+            createdOn: "desc",
+          },
           include: {
             table: {
               select: {
