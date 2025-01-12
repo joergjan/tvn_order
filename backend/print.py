@@ -33,7 +33,7 @@ async def print_orders(prisma):
         data={"solved": True}
     )
 
-    some_mintues_ago = datetime.utcnow() - timedelta(minutes=2)
+    some_mintues_ago = datetime.utcnow() - timedelta(minutes=2.5)
 
     # Fetch orders where printed is false
     orders = await prisma.order.find_many(
