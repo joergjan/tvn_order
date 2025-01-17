@@ -112,7 +112,10 @@
 
           return async ({ result }) => {
             messageComponent.showMessage(result);
-            loading = false;
+            order = result.data.order;
+            setTimeout(() => {
+              loading = false;
+            }, 250);
           };
         }}
       >
@@ -143,7 +146,9 @@
 
           return async ({ result }) => {
             messageComponent.showMessage(result);
-            loading = false;
+            setTimeout(() => {
+              loading = false;
+            }, 250);
           };
         }}
       >
@@ -173,7 +178,9 @@
             loading = true;
             return async ({ result }) => {
               messageComponent.showMessage(result);
-              loading = false;
+              setTimeout(() => {
+                loading = false;
+              }, 250);
             };
           }}
         >
@@ -271,7 +278,9 @@
             loading = true;
             return async ({ result }) => {
               messageComponent.showMessage(result);
-              loading = false;
+              setTimeout(() => {
+                loading = false;
+              }, 250);
             };
           }}
         >
@@ -367,7 +376,9 @@
         loading = true;
         return async ({ result }) => {
           messageComponent.showMessage(result);
-          loading = false;
+          setTimeout(() => {
+            loading = false;
+          }, 250);
         };
       }}
     >

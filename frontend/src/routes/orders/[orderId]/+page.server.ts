@@ -55,7 +55,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       order: order,
     };
   } catch {
-    return {};
+    return fail(500, {
+      message: "Ein Fehler ist aufgetreten",
+    });
   }
 };
 
@@ -96,7 +98,11 @@ export const actions: Actions = {
           },
         });
 
-        return { success: true, message: "Tisch wurde aktualisiert" };
+        return {
+          success: true,
+          message: "Tisch wurde aktualisiert",
+          order: order,
+        };
       } catch (err) {
         console.error("Error creating new Order:", err);
         return fail(500, {
@@ -162,7 +168,11 @@ export const actions: Actions = {
           },
         });
 
-        return { success: true, message: "Menus wurden aktualisiert" };
+        return {
+          success: true,
+          message: "Menus wurden aktualisiert",
+          order: order,
+        };
       } catch (err) {
         console.error("Error updating menus:", err);
         return fail(500, {
@@ -228,7 +238,11 @@ export const actions: Actions = {
           },
         });
 
-        return { success: true, message: "Getränke wurden aktualisiert" };
+        return {
+          success: true,
+          message: "Getränke wurden aktualisiert",
+          order: order,
+        };
       } catch (err) {
         console.error("Error updating drinks:", err);
         return fail(500, {
@@ -274,7 +288,11 @@ export const actions: Actions = {
           },
         });
 
-        return { success: true, message: "Name wurde aktualisiert" };
+        return {
+          success: true,
+          message: "Name wurde aktualisiert",
+          order: order,
+        };
       } catch (err) {
         console.error("Error updating Name:", err);
         return fail(500, {
@@ -319,7 +337,11 @@ export const actions: Actions = {
           },
         });
 
-        return { success: true, message: "Spezialwünsche wurden aktualisiert" };
+        return {
+          success: true,
+          message: "Spezialwünsche wurden aktualisiert",
+          order: order,
+        };
       } catch (err) {
         console.error("Error updating comment: ", err);
         return fail(500, {

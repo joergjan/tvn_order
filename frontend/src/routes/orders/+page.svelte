@@ -55,11 +55,15 @@
   bind:this={searchForm}
   use:enhance={({}) => {
     return async ({ result }) => {
+      loading = true;
       messageComponent.showMessage(result);
 
       if (result.type === "success") {
         orders = await result.data.orders;
+      } else {
+        orders = [];
       }
+      loading = false;
     };
   }}
 >
