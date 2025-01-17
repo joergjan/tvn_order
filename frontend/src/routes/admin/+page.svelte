@@ -94,6 +94,7 @@
           messageComponent.showMessage(result);
           loading = false;
         };
+        invalidateAll()
       }}
     >
       <div class="block">
@@ -136,7 +137,9 @@
               return async ({ result }) => {
                 messageComponent.showMessage(result);
                 loading = false;
+                invalidateAll()
               };
+              
             }}
             bind:this={updateMenuForm[i]}
           >
@@ -186,6 +189,8 @@
               return async ({ result }) => {
                 messageComponent.showMessage(result);
                 loading = false;
+                invalidateAll()
+
               };
             }}
           >
@@ -234,6 +239,8 @@
         return async ({ result }) => {
           messageComponent.showMessage(result);
           loading = false;
+          invalidateAll()
+
         };
       }}
     >
@@ -270,7 +277,8 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;
+                loading = false;              invalidateAll()
+
               };
             }}
             bind:this={updateDrinkForm[i]}
@@ -320,7 +328,8 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;
+                loading = false;              invalidateAll()
+
               };
             }}
           >
@@ -369,6 +378,8 @@
         return async ({ result }) => {
           messageComponent.showMessage(result);
           loading = false;
+          invalidateAll()
+
         };
       }}
     >
@@ -400,7 +411,8 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;
+                loading = false;              invalidateAll()
+
               };
             }}
             bind:this={updateTableForm[i]}
@@ -424,7 +436,8 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;
+                loading = false;              invalidateAll()
+
               };
             }}
             class="place-content-end"
@@ -480,7 +493,8 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;
+                loading = false;              invalidateAll()
+
               };
             }}
             class="col-span-2 grid grid-cols-2"
@@ -517,7 +531,8 @@
 
                 return async ({ result }) => {
                   messageComponent.showMessage(result);
-                  loading = false;
+                  loading = false;                invalidateAll()
+
                 };
               }}
             >
