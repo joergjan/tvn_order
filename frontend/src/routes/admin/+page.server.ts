@@ -43,7 +43,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      return fail(500, { message: e.message });
     }
   },
   updateTable: async ({ request, locals }) => {
@@ -68,7 +68,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      return fail(500, { message: e.message });
     }
   },
   deleteTable: async ({ request, locals }) => {
@@ -79,6 +79,7 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
+    console.log(formData.id);
     try {
       const table = await prismaClient.table.delete({
         where: { id: Number(formData.id) },
@@ -89,8 +90,16 @@ export const actions: Actions = {
         message: `Tisch ${table.name} wurde wurde gelöscht`,
       };
     } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      console.error("Failed to delete Table " + e);
+
+      if (e.code === "P2003") {
+        return fail(500, {
+          message:
+            "Dieser Tisch kann nicht gelöscht werden, da Bestellungen dafür bestehen.",
+        });
+      }
+
+      return fail(500, { message: e.message });
     }
   },
   updateUser: async ({ request, locals }) => {
@@ -115,8 +124,8 @@ export const actions: Actions = {
         message: `Benutzer ${user.username} aktualisiert`,
       };
     } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      console.error("Failed to update User" + e);
+      return fail(500, { message: e.message });
     }
   },
   deleteUser: async ({ request, locals }) => {
@@ -128,8 +137,10 @@ export const actions: Actions = {
     const formData = Object.fromEntries(await request.formData());
     const id = formData.id as string;
 
+    let user: User;
+
     try {
-      const user = await prismaClient.user.delete({
+      user = await prismaClient.user.delete({
         where: { id: id },
       });
 
@@ -138,8 +149,15 @@ export const actions: Actions = {
         message: `Benutzer ${user.username} wurde gelöscht`,
       };
     } catch (e) {
-      console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      console.error("Failed to delete user" + e);
+
+      if (e.code === "P2003") {
+        return fail(500, {
+          message: `Dieser Benutzer kann nicht gelöscht werden, da er bereits Bestellungen erfasst hat.`,
+        });
+      }
+
+      return fail(500, { message: e.message });
     }
   },
   createDrink: async ({ request, locals }) => {
@@ -164,7 +182,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      return fail(500, { message: e.message });
     }
   },
   updateDrink: async ({ request, locals }) => {
@@ -192,7 +210,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      return fail(500, { message: e.message });
     }
   },
   deleteDrink: async ({ request, locals }) => {
@@ -214,7 +232,8 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+
+      return fail(500, { message: e.message });
     }
   },
   createMenu: async ({ request, locals }) => {
@@ -239,7 +258,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+      return fail(500, { message: e.message });
     }
   },
   updateMenu: async ({ request, locals }) => {
@@ -265,7 +284,7 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to update drink" + e);
-      return fail(500, { message: "Failed to update drink" });
+      return fail(500, { message: e.message });
     }
   },
   deleteMenu: async ({ request, locals }) => {
@@ -287,7 +306,8 @@ export const actions: Actions = {
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
-      return fail(500, { message: "Failed to create new Table" });
+
+      return fail(500, { message: e.message });
     }
   },
   fetchErrors: async () => {

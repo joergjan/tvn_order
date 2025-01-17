@@ -90,11 +90,11 @@
       use:enhance={({}) => {
         loading = true;
 
-        return async ({ result }) => {
+        return async ({ result, update }) => {
           messageComponent.showMessage(result);
           loading = false;
+          update();
         };
-        invalidateAll()
       }}
     >
       <div class="block">
@@ -137,9 +137,7 @@
               return async ({ result }) => {
                 messageComponent.showMessage(result);
                 loading = false;
-                invalidateAll()
               };
-              
             }}
             bind:this={updateMenuForm[i]}
           >
@@ -189,8 +187,6 @@
               return async ({ result }) => {
                 messageComponent.showMessage(result);
                 loading = false;
-                invalidateAll()
-
               };
             }}
           >
@@ -236,11 +232,10 @@
       use:enhance={({}) => {
         loading = true;
 
-        return async ({ result }) => {
+        return async ({ result, update }) => {
           messageComponent.showMessage(result);
           loading = false;
-          invalidateAll()
-
+          update();
         };
       }}
     >
@@ -277,8 +272,7 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;              invalidateAll()
-
+                loading = false;
               };
             }}
             bind:this={updateDrinkForm[i]}
@@ -328,8 +322,7 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;              invalidateAll()
-
+                loading = false;
               };
             }}
           >
@@ -375,11 +368,10 @@
       use:enhance={({}) => {
         loading = true;
 
-        return async ({ result }) => {
+        return async ({ result, update }) => {
           messageComponent.showMessage(result);
           loading = false;
-          invalidateAll()
-
+          update();
         };
       }}
     >
@@ -411,8 +403,7 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;              invalidateAll()
-
+                loading = false;
               };
             }}
             bind:this={updateTableForm[i]}
@@ -436,8 +427,7 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;              invalidateAll()
-
+                loading = false;
               };
             }}
             class="place-content-end"
@@ -493,8 +483,7 @@
 
               return async ({ result }) => {
                 messageComponent.showMessage(result);
-                loading = false;              invalidateAll()
-
+                loading = false;
               };
             }}
             class="col-span-2 grid grid-cols-2"
@@ -531,8 +520,7 @@
 
                 return async ({ result }) => {
                   messageComponent.showMessage(result);
-                  loading = false;                invalidateAll()
-
+                  loading = false;
                 };
               }}
             >
