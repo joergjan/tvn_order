@@ -30,7 +30,7 @@ export const actions: Actions = {
       });
 
       return { success: true, message: "Registrierung erfolgreich" };
-    } catch (err) {
+    } catch (err: Error | any) {
       console.error(err);
 
       if (err.code == "P2002") {

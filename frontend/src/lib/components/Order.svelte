@@ -1,5 +1,6 @@
 <script lang="ts">
   export let order;
+  export let init: Boolean = true;
 
   let totalMenuOrderPrice: string = "0";
   let totalDrinkOrderPrice: string = "0";
@@ -46,12 +47,14 @@
 <div
   class="relative rounded-md shadow-md {order.printed
     ? 'bg-green-300'
-    : 'bg-red-300'}"
+    : init
+      ? 'bg-white'
+      : 'bg-red-300'}"
 >
   <div
     class="h-12 rounded-t-md items-center justify-center flex {order.printed
       ? 'text-white bg-green-500'
-      : ' text-white bg-red-500'}  font-semibold"
+      : ' text-white bg-red-500'} font-semibold {init ? 'hidden' : ''}"
   >
     {order.printed ? "bereits gedruckt :)" : "nicht gedruckt!"}
   </div>

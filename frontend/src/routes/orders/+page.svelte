@@ -175,7 +175,7 @@
         {#each orders as order, i}
           {#if !order.printed}
             <li class="relative">
-              <Order {order} />
+              <Order {order} init={false} />
 
               {#if checkIfEditAllowed(order)}
                 <div class="absolute top-2 left-2">
