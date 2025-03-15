@@ -1,19 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
-  import { fade, fly } from "svelte/transition";
-  import { cubicOut } from "svelte/easing";
-  import Actions from "./Actions.svelte";
-  import { invalidateAll } from "$app/navigation";
+  import { fade } from "svelte/transition";
   import Order from "$lib/components/Order.svelte";
-  import { redirect } from "@sveltejs/kit";
   import { browser } from "$app/environment";
   import Loader from "$lib/components/Loader.svelte";
   import Message from "$lib/components/Message.svelte";
 
   export let data: PageData & { users: any };
-  $: ({ tables, drinks, menus } = data);
+  $: ({ rows, drinks, menus } = data);
 
   let messageComponent;
   let loading = false;
@@ -22,10 +17,13 @@
   let tableId: number = 0;
   let intervalId;
   let totalAmount: number = 0;
+  let selectedRowId: number = 0;
+  let selectedTableId: number = 0;
 
+  $: selectedRow = rows.find((row) => row.id === selectedRowId);
+  $: selectedRowId && ((selectedTableId = 0), (tableId = 0));
   $: menuCounter = Array(menus?.length).fill(0);
   $: drinkCounter = Array(drinks?.length).fill(0);
-
   $: {
     if (tableId === 0 && browser) {
       intervalId = setInterval(getTableId, 500);
@@ -128,6 +126,7 @@
       loading = true;
 
       return async ({ result, update }) => {
+        selectedRowId = 0;
         order = await result.data.order;
         messageComponent.showMessage(result);
         formElement.reset();
@@ -143,14 +142,33 @@
     <div class="space-y-3">
       <div class="flex items-center">
         <div class="w-24">
-          <label for="table" class="">Tisch</label>
+          <label for="row" class="">Reihe</label>
         </div>
-        <select name="table" required id="tableId">
+        <select name="row" required id="rowId" bind:value={selectedRowId}>
           <option value="" disabled selected>wählen</option>
-          {#each tables ?? [] as table}
-            <option value={table.id}>{table.name}</option>
+          {#each rows ?? [] as row}
+            <option value={row.id}>{row.name}</option>
           {/each}
         </select>
+      </div>
+
+      <div class="flex items-center">
+        <div class="w-24">
+          <label for="table" class="">Tisch</label>
+        </div>
+        {#if selectedRow}
+          <select
+            name="table"
+            required
+            id="tableId"
+            bind:value={selectedTableId}
+          >
+            <option value="" disabled selected>wählen</option>
+            {#each selectedRow.table ?? [] as table}
+              <option value={table.id}>{table.name}</option>
+            {/each}
+          </select>
+        {/if}
       </div>
 
       <div class="flex items-center">

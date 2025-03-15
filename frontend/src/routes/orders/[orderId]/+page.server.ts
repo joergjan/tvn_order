@@ -62,7 +62,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions: Actions = {
-  updateTable: async ({ request, locals, params }) => {
+  updateRow: async ({ request, locals, params }) => {
     const session = await locals.auth.validate();
     if (!session) {
       throw redirect(302, "/");
@@ -90,6 +90,59 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            row: {
+              connect: {
+                id: Number(formData.row),
+              },
+            },
+          },
+        });
+
+        return {
+          success: true,
+          message: "Reihe wurde aktualisiert",
+          orders: order,
+        };
+      } catch (err) {
+        console.error("Error updating row:", err);
+        return fail(500, {
+          message: "Reihe konnte nicht aktualisiert werden:",
+        });
+      }
+    } else {
+      return fail(500, {
+        message: "Fehler: Bestellung wurde bereits gedruckt",
+      });
+    }
+  },
+  updateTable: async ({ request, locals, params }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    let order: Order;
+
+    try {
+      order = await prismaClient.order.findUnique({
+        where: {
+          id: Number(params.orderId),
+        },
+      });
+    } catch (err) {
+      console.error("Error updateing table:", err);
+      return fail(500, { message: "Bestellung konnte nicht gefunden werden." });
+    }
+
+    if (!order.printed) {
+      try {
+        await prismaClient.order.update({
+          where: {
+            id: Number(params.orderId),
+          },
+          data: {
             table: {
               connect: {
                 id: Number(formData.table),
@@ -104,7 +157,7 @@ export const actions: Actions = {
           orders: order,
         };
       } catch (err) {
-        console.error("Error creating new Order:", err);
+        console.error("Error updating table:", err);
         return fail(500, {
           message: "Tisch konnte nicht aktualisiert werden:",
         });
@@ -277,7 +330,6 @@ export const actions: Actions = {
     }
 
     if (!order.printed) {
-      console.log("works");
       try {
         order = await prismaClient.order.update({
           where: {

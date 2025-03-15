@@ -8,11 +8,12 @@
   import { invalidateAll } from "$app/navigation";
 
   export let data: PageData & { users: any };
-  $: ({ users, tables, userId, drinks, menus } = data);
+  $: ({ users, rows, userId, drinks, menus } = data);
 
-  let selectedMenuItem: "Menu" | "Getränke" | "Tische" | "Benutzer" = "Menu";
+  let selectedMenuItem: "Menu" | "Getränke" | "Reihen" | "Benutzer" = "Menu";
   let messageComponent;
 
+  let updateRowForm: HTMLFormElement[] = [];
   let updateTableForm: HTMLFormElement[] = [];
   let updateMenuForm: HTMLFormElement[] = [];
   let updateDrinkForm: HTMLFormElement[] = [];
@@ -55,13 +56,13 @@
   <li class="w-full">
     <button
       on:click={() => {
-        selectedMenuItem = "Tische";
+        selectedMenuItem = "Reihen";
       }}
-      class="{selectedMenuItem === 'Tische'
+      class="{selectedMenuItem === 'Reihen'
         ? 'bg-tvblue  text-white border-t border-r border-l border-transparent'
         : 'border-t border-l border-r border-gray-300'} group md:rounded-t-xl rounded-t-lg w-full py-2"
     >
-      Tische
+      Reihen
     </button>
   </li>
   <li class="w-full">
@@ -357,12 +358,12 @@
       {/each}
     </ul>
   </div>
-{:else if selectedMenuItem === "Tische"}
+{:else if selectedMenuItem === "Reihen"}
   <div>
-    <h2>Tisch erfassen</h2>
+    <h2>Reihe erfassen</h2>
 
     <form
-      action="?/createTable"
+      action="?/createRow"
       class="space-y-2"
       method="POST"
       use:enhance={({}) => {
@@ -375,12 +376,12 @@
         };
       }}
     >
-      <label for="name">Tischname</label>
+      <label for="name">Reihenname</label>
       <input
         type="text"
         name="name"
         autocomplete="off"
-        placeholder="Namen für Tisch eingeben"
+        placeholder="Namen für Reihe eingeben"
         required
       />
 
@@ -392,73 +393,188 @@
       </button>
     </form>
 
-    <ul class="space-y-2 pt-4">
-      {#each tables ?? [] as table, i}
-        <li class="flex space-x-2">
-          <form
-            action="?/updateTable"
-            method="POST"
-            use:enhance={({}) => {
-              loading = true;
+    <div class="pt-20"></div>
+    <h2>Reihen bearbeiten</h2>
+    <ul class="">
+      {#each rows ?? [] as row, i}
+        <li class="flex space-x-2 pb-7">
+          <div class="grid grid-cols-3 gap-3">
+            <div>Reihenname</div>
+            <div>Tischname</div>
+            <div></div>
+            <div class="flex gap-3">
+              <form
+                action="?/updateRow"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
 
-              return async ({ result }) => {
-                messageComponent.showMessage(result);
-                loading = false;
-              };
-            }}
-            bind:this={updateTableForm[i]}
-          >
-            <input hidden type="Number" bind:value={table.id} name="id" />
-            <label for="name">Tischname</label>
-            <input
-              autocomplete="off"
-              type="text"
-              bind:value={table.name}
-              name="name"
-              on:change={() => updateTableForm[i].requestSubmit()}
-            />
-          </form>
+                  return async ({ result }) => {
+                    messageComponent.showMessage(result);
+                    loading = false;
+                  };
+                }}
+                bind:this={updateRowForm[i]}
+              >
+                <input hidden type="Number" bind:value={row.id} name="id" />
+                <input
+                  autocomplete="off"
+                  type="text"
+                  bind:value={row.name}
+                  name="name"
+                  on:change={() => updateRowForm[i].requestSubmit()}
+                />
+              </form>
 
-          <form
-            action="?/deleteTable"
-            method="POST"
-            use:enhance={({}) => {
-              loading = true;
+              <form
+                action="?/deleteRow"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
 
-              return async ({ result }) => {
-                messageComponent.showMessage(result);
-                loading = false;
-              };
-            }}
-            class="place-content-end"
-          >
-            <input
-              hidden
-              type="Number"
-              autocomplete="off"
-              bind:value={table.id}
-              name="id"
-            />
-            <button
-              aria-label="delete-table"
-              class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
-              type="submit"
-            >
-              <p class="group-hover:animate-wiggle">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  class="group-hover:scale-105 fill-white"
+                  return async ({ result }) => {
+                    messageComponent.showMessage(result);
+                    loading = false;
+                  };
+                }}
+                class="place-content-start"
+              >
+                <input
+                  hidden
+                  type="Number"
+                  autocomplete="off"
+                  bind:value={row.id}
+                  name="id"
+                />
+                <button
+                  aria-label="delete-table"
+                  class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
+                  type="submit"
                 >
-                  <path
-                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
-                  />
-                </svg>
-              </p>
-            </button>
-          </form>
+                  <p class="group-hover:animate-wiggle">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      class="group-hover:scale-105 fill-white"
+                    >
+                      <path
+                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                      />
+                    </svg>
+                  </p>
+                </button>
+              </form>
+            </div>
+            <div>
+              <form
+                action="?/createTable"
+                method="POST"
+                use:enhance={({}) => {
+                  loading = true;
+
+                  return async ({ result, update }) => {
+                    messageComponent.showMessage(result);
+                    loading = false;
+                    update();
+                  };
+                }}
+              >
+                <input type="text" hidden name="rowId" bind:value={row.id} />
+                <input
+                  type="text"
+                  name="name"
+                  autocomplete="off"
+                  placeholder="Namen für Tisch eingeben"
+                  required
+                />
+
+                <button
+                  class="bg-tvblue hover:bg-tvbluelight text-white group rounded-md py-2 px-3 mt-3"
+                  type="submit"
+                >
+                  <p class="group-hover:scale-105">hinzufügen</p>
+                </button>
+              </form>
+            </div>
+
+            <div>
+              {#each row.table ?? [] as table, j}
+                <div class="flex gap-3 pb-3">
+                  <form
+                    action="?/updateTable"
+                    method="POST"
+                    use:enhance={({}) => {
+                      loading = true;
+
+                      return async ({ result }) => {
+                        messageComponent.showMessage(result);
+                        loading = false;
+                      };
+                    }}
+                    bind:this={updateTableForm[table.id]}
+                  >
+                    <input
+                      hidden
+                      type="Number"
+                      bind:value={table.id}
+                      name="id"
+                    />
+                    <input
+                      autocomplete="off"
+                      type="text"
+                      bind:value={table.name}
+                      name="name"
+                      on:change={() =>
+                        updateTableForm[table.id].requestSubmit()}
+                    />
+                  </form>
+
+                  <form
+                    action="?/deleteTable"
+                    method="POST"
+                    use:enhance={({}) => {
+                      loading = true;
+
+                      return async ({ result }) => {
+                        messageComponent.showMessage(result);
+                        loading = false;
+                      };
+                    }}
+                    class="place-content-end"
+                  >
+                    <input
+                      hidden
+                      type="Number"
+                      autocomplete="off"
+                      bind:value={table.id}
+                      name="id"
+                    />
+                    <button
+                      aria-label="delete-table"
+                      class="group py-2 px-3 rounded-md text-white bg-red-500 hover:bg-red-600"
+                      type="submit"
+                    >
+                      <p class="group-hover:animate-wiggle">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="24px"
+                          viewBox="0 -960 960 960"
+                          width="24px"
+                          class="group-hover:scale-105 fill-white"
+                        >
+                          <path
+                            d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                          />
+                        </svg>
+                      </p>
+                    </button>
+                  </form>
+                </div>
+              {/each}
+            </div>
+          </div>
         </li>
       {/each}
     </ul>

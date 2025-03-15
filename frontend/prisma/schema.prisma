@@ -12,21 +12,32 @@ model Table {
   id    Int     @id @default(autoincrement())
   name  String
   order Order[]
+  row   Row     @relation(fields: [rowId], references: [id])
+  rowId Int
+}
+
+model Row {
+  id    Int     @id @default(autoincrement())
+  name  String
+  table Table[]
+  order Order[]
 }
 
 model Order {
   id            Int            @id @default(autoincrement())
-  table         Table          @relation(fields: [tableId], references: [id])
-  tableId       Int
   user          User           @relation(fields: [userId], references: [id])
   userId        String
   name          String?
   printed       Boolean        @default(false)
   createdOn     DateTime       @default(now())
-  updatedOn     DateTime       @default(now())
+  updatedOn     DateTime?      @default(now())
   orderedDrinks OrderedDrinks?
   orderedMenus  OrderedMenus?
   comment       String?
+  table         Table          @relation(fields: [tableId], references: [id])
+  tableId       Int
+  row           Row?           @relation(fields: [rowId], references: [id])
+  rowId         Int?
 }
 
 model Menu {

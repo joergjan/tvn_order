@@ -65,7 +65,7 @@
       <p class="w-1/3 flex justify-end">{order.user.username}</p>
     </div>
 
-    <h3>Tisch {order.table.name}</h3>
+    <h3>Reihe {order.row.name}, Tisch {order.table.name}</h3>
     {#if order.name}
       <h4>für {order.name}</h4>
     {/if}

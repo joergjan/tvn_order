@@ -22,6 +22,85 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
+  createRow: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      const row = await prismaClient.row.create({
+        data: {
+          name: (formData.name as string) || "",
+        },
+      });
+
+      return {
+        success: true,
+        message: `Reihe ${row.name} erfasst`,
+      };
+    } catch (e) {
+      console.error("Failed to create new row" + e);
+      return fail(500, { message: e.message });
+    }
+  },
+  updateRow: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      const row = await prismaClient.row.update({
+        where: { id: Number(formData.id) },
+        data: {
+          name: (formData.name as string) || "",
+        },
+      });
+
+      return {
+        success: true,
+        message: `Reihe ${row.name} aktualisiert`,
+      };
+    } catch (e) {
+      console.error("Failed to create new row" + e);
+      return fail(500, { message: e.message });
+    }
+  },
+  deleteRow: async ({ request, locals }) => {
+    const session = await locals.auth.validate();
+    if (!session) {
+      throw redirect(302, "/");
+    }
+
+    const formData = Object.fromEntries(await request.formData());
+
+    try {
+      const row = await prismaClient.row.delete({
+        where: { id: Number(formData.id) },
+      });
+
+      return {
+        success: true,
+        message: `Reihe ${row.name} wurde wurde gelöscht`,
+      };
+    } catch (e) {
+      console.error("Failed to delete row " + e);
+
+      if (e.code === "P2003") {
+        return fail(500, {
+          message:
+            "Diese Reihe kann nicht gelöscht werden, da Bestellungen dafür bestehen.",
+        });
+      }
+
+      return fail(500, { message: e.message });
+    }
+  },
   createTable: async ({ request, locals }) => {
     const session = await locals.auth.validate();
     if (!session) {
@@ -34,12 +113,16 @@ export const actions: Actions = {
       const table = await prismaClient.table.create({
         data: {
           name: (formData.name as string) || "",
+          rowId: Number(formData.rowId),
+        },
+        include: {
+          row: true,
         },
       });
 
       return {
         success: true,
-        message: `Tisch ${table.name} erfasst`,
+        message: `Tisch ${table.name} erfasst für Reihe ${table.row.name}`,
       };
     } catch (e) {
       console.error("Failed to create new Table" + e);
@@ -79,7 +162,6 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    console.log(formData.id);
     try {
       const table = await prismaClient.table.delete({
         where: { id: Number(formData.id) },
@@ -192,8 +274,6 @@ export const actions: Actions = {
     }
 
     const formData = Object.fromEntries(await request.formData());
-
-    console.log(formData);
 
     try {
       const drink = await prismaClient.drink.update({

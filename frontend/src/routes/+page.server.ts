@@ -45,6 +45,11 @@ export const actions: Actions = {
               id: Number(formData.table),
             },
           },
+          row: {
+            connect: {
+              id: Number(formData.row),
+            },
+          },
           user: {
             connect: {
               id: session.user.userId as string,
@@ -82,6 +87,11 @@ export const actions: Actions = {
         },
         include: {
           table: {
+            select: {
+              name: true,
+            },
+          },
+          row: {
             select: {
               name: true,
             },

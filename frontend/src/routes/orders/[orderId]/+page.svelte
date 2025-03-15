@@ -6,23 +6,25 @@
   import Loader from "$lib/components/Loader.svelte";
 
   export let data: PageData;
-  $: ({ order, tables, menus, drinks } = data);
+  $: ({ order, rows, menus, drinks } = data);
 
   let loading: boolean = false;
   let messageComponent;
   let drinkCounter: number[] = Array(drinks?.length).fill(0);
   let menuCounter: number[] = Array(menus?.length).fill(0);
+  let rowForm: HTMLFormElement;
   let tableForm: HTMLFormElement;
   let nameForm: HTMLFormElement;
   let menuForm: HTMLFormElement;
   let drinkForm: HTMLFormElement;
   let commentForm: HTMLFormElement;
+  $: selectedRow = rows?.find((row) => row.id == order.rowId);
 
   let totalAmount: number = 0;
 
   $: menus && calculateMenuCounter();
   $: drinks && calculateDrinkCounter();
-  $: tables && calculateTotalAmount();
+  $: rows && calculateTotalAmount();
 
   function calculateMenuCounter() {
     if (order && menus) {
@@ -104,6 +106,39 @@
   <div class="text-xl">
     <div class="space-y-3">
       <form
+        action="?/updateRow"
+        method="POST"
+        bind:this={rowForm}
+        use:enhance={({}) => {
+          loading = true;
+
+          return async ({ result }) => {
+            messageComponent.showMessage(result);
+            order = result.data.order;
+            setTimeout(() => {
+              loading = false;
+            }, 250);
+          };
+        }}
+      >
+        <div class="flex items-center">
+          <div class="w-24">
+            <label for="row" class="">Reihe</label>
+          </div>
+
+          <select
+            name="row"
+            required
+            value={order?.rowId}
+            on:change={() => rowForm.requestSubmit()}
+          >
+            {#each rows ?? [] as row}
+              <option value={row.id}>{row.name}</option>
+            {/each}
+          </select>
+        </div>
+      </form>
+      <form
         action="?/updateTable"
         method="POST"
         bind:this={tableForm}
@@ -130,7 +165,7 @@
             value={order?.tableId}
             on:change={() => tableForm.requestSubmit()}
           >
-            {#each tables ?? [] as table}
+            {#each selectedRow.table ?? [] as table}
               <option value={table.id}>{table.name}</option>
             {/each}
           </select>
