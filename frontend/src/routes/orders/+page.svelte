@@ -9,11 +9,12 @@
   import checkIfEditAllowed from "$lib/scripts/order";
 
   export let data: PageData & { users: any };
-  $: ({ tables, users, username } = data);
+  $: ({ tables, users, username, isAdmin } = data);
 
+  let selectedTable: string = "";
   let messageComponent;
   let searchForm: HTMLFormElement;
-  let orders;
+  let orders: Order[];
   let loading: boolean = false;
   let tableIndex: number = 0;
   let userIndex: number = 0;
@@ -77,6 +78,7 @@
           class="w-32"
           id="tableid"
           name="tableid"
+          bind:value={selectedTable}
           on:change={() => {
             searchForm.requestSubmit();
             tableIndex = 1;
@@ -230,7 +232,10 @@
                     </button>
                   </form>
                 </div>
-                <div class="absolute top-2 right-2 flex space-x-2">
+              {/if}
+
+              <div class="absolute top-2 right-2 flex space-x-2">
+                {#if isAdmin}
                   <div class="h-5">
                     <form
                       action="?/changePrintStatus"
@@ -245,16 +250,30 @@
                         }
 
                         return async ({ result }) => {
-                          loading = true;
                           messageComponent.showMessage(result);
-                          if (result.tyoe === "success") {
+                          loading = true;
+                          if (result.type === "success") {
                             invalidateAll();
-                            searchForm.requestSubmit();
+                            orders = await result.data.orders;
+                          } else {
+                            messageComponent.showMessage(result);
                           }
                           loading = false;
                         };
                       }}
                     >
+                      <input
+                        type="number"
+                        name="tableid"
+                        hidden
+                        bind:value={selectedTable}
+                      />
+                      <input
+                        type="text"
+                        name="userid"
+                        hidden
+                        bind:value={selectedUser}
+                      />
                       <input
                         type="number"
                         name="id"
@@ -282,7 +301,8 @@
                       </button>
                     </form>
                   </div>
-
+                {/if}
+                {#if checkIfEditAllowed(order)}
                   <div class="group py-1 px-2 rounded-md bg-white text-red-500">
                     <a href={"/orders/" + order.id} aria-label="edit-order">
                       <p class="group-hover:animate-wiggle">
@@ -300,8 +320,8 @@
                       </p>
                     </a>
                   </div>
-                </div>
-              {/if}
+                {/if}
+              </div>
             </li>
           {/if}
         {/each}

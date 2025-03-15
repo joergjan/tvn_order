@@ -85,7 +85,7 @@ export const actions: Actions = {
 
     if (!order.printed) {
       try {
-        order = await prismaClient.order.update({
+        await prismaClient.order.update({
           where: {
             id: Number(params.orderId),
           },
@@ -101,7 +101,7 @@ export const actions: Actions = {
         return {
           success: true,
           message: "Tisch wurde aktualisiert",
-          order: order,
+          orders: order,
         };
       } catch (err) {
         console.error("Error creating new Order:", err);
