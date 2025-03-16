@@ -6,6 +6,7 @@
   import { browser } from "$app/environment";
   import Loader from "$lib/components/Loader.svelte";
   import Message from "$lib/components/Message.svelte";
+  import { onMount } from "svelte";
 
   export let data: PageData & { users: any };
   $: ({ rows, drinks, menus } = data);
@@ -31,7 +32,16 @@
     if (tableId > 0 && browser) {
       clearInterval(intervalId);
     }
+    if (browser && selectedRowId) {
+      localStorage.setItem("selectedRow", String(selectedRow.id));
+      console.log(selectedRow);
+    }
   }
+
+  onMount(() => {
+    selectedRowId = Number(localStorage.getItem("selectedRow"));
+    selectedRow = rows.find((row) => row.id === selectedRowId);
+  });
 
   function getTableId() {
     const element = document.getElementById("tableId");
