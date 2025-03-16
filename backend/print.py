@@ -19,9 +19,10 @@ async def print_orders(prisma):
     except Exception as e:
         if not prisma.is_connected():
             await prisma.connect()
-        await prisma.error.create(
-            data={"message": "Drucker nicht gefunden"}
-        )
+        if not await prisma.error.find_first(where={"solved": False}):
+            await prisma.error.create(
+                data={"message": "Drucker nicht gefunden"}
+            )
         return
 
     # Ensure the Prisma client is connected
