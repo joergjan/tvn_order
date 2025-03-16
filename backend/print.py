@@ -85,7 +85,7 @@ async def print_orders(prisma):
                 receipt.text(f"Zeit: {formatted_time}")
 
                 receipt.text(
-                    f"\n\nTisch: {order.table.name}")
+                    f"\n\nReihe: {order.row.name} / Tisch: {order.table.name}")
                 if order.name:
                     receipt.text(f"\nfür {order.name}")
 
