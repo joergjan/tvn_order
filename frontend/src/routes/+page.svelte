@@ -134,6 +134,7 @@
         menuCounter = menuCounter;
         drinkCounter.fill(0);
         drinkCounter = drinkCounter;
+        totalAmount = 0;
         showOrder = true;
         loading = false;
       };
