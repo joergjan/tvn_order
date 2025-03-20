@@ -9,12 +9,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   }
 
   try {
-    const order: Order = await prismaClient.order.findUnique({
+    const order = await prismaClient.order.findUnique({
       where: {
         id: Number(params.orderId),
       },
       include: {
         table: {
+          select: {
+            name: true,
+          },
+        },
+        row: {
           select: {
             name: true,
           },
@@ -46,10 +51,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
         },
       },
     });
-
-    if (order.printed) {
-      redirect(302, "/");
-    }
 
     return {
       order: order,
@@ -90,6 +91,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             row: {
               connect: {
                 id: Number(formData.row),
@@ -101,7 +103,7 @@ export const actions: Actions = {
         return {
           success: true,
           message: "Reihe wurde aktualisiert",
-          orders: order,
+          order: order,
         };
       } catch (err) {
         console.error("Error updating row:", err);
@@ -110,7 +112,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }
@@ -143,6 +145,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             table: {
               connect: {
                 id: Number(formData.table),
@@ -154,7 +157,7 @@ export const actions: Actions = {
         return {
           success: true,
           message: "Tisch wurde aktualisiert",
-          orders: order,
+          order: order,
         };
       } catch (err) {
         console.error("Error updating table:", err);
@@ -163,7 +166,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }
@@ -203,6 +206,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             orderedMenus: {
               update: {
                 menuOrder: {
@@ -233,7 +237,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }
@@ -273,6 +277,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             orderedDrinks: {
               update: {
                 drinkOrder: {
@@ -303,7 +308,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }
@@ -316,7 +321,7 @@ export const actions: Actions = {
 
     const formData = Object.fromEntries(await request.formData());
 
-    let order: Order;
+    let order;
 
     try {
       order = await prismaClient.order.findUnique({
@@ -336,6 +341,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             name: (formData.name as string) || "",
           },
         });
@@ -352,7 +358,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }
@@ -385,6 +391,7 @@ export const actions: Actions = {
             id: Number(params.orderId),
           },
           data: {
+            updatedOn: new Date(),
             comment: (formData.comment as string) || "",
           },
         });
@@ -401,7 +408,7 @@ export const actions: Actions = {
         });
       }
     } else {
-      return fail(500, {
+      return fail(405, {
         message: "Fehler: Bestellung wurde bereits gedruckt",
       });
     }

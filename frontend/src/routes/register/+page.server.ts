@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 */
 
 export const actions: Actions = {
-  default: async ({ request }) => {
+  default: async ({ request, locals }) => {
     const { username } = Object.fromEntries(await request.formData()) as Record<
       string,
       string
@@ -28,6 +28,13 @@ export const actions: Actions = {
           username,
         },
       });
+
+      const key = await auth.useKey("username", username, username);
+      const session = await auth.createSession({
+        userId: key.userId,
+        attributes: {}, // expects `Lucia.DatabaseSessionAttributes`
+      });
+      locals.auth.setSession(session);
 
       return { success: true, message: "Registrierung erfolgreich" };
     } catch (err: Error | any) {

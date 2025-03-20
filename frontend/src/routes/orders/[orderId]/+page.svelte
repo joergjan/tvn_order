@@ -95,12 +95,18 @@
 
 {#if order && menus && drinks}
   <div
-    class="fixed top-15 right-2 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
+    class="fixed top-24 right-8 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
   >
     <p>Total: CHF {totalAmount}</p>
   </div>
 
-  <h2>Bestellung Nr. {order.id} bearbeiten</h2>
+  <div
+    class="fixed top-32 right-8 bg-red-500 text-white text-sm px-2 py-1 rounded-md"
+  >
+    <p>bereits gedruckt</p>
+  </div>
+
+  <h2>Bestellung Nr. {order.id} {order.printed ? "" : "bearbeiten"}</h2>
   <p class="mb-3">Bestellung erstellt von {order.user.username}</p>
 
   <div class="text-xl">
@@ -127,6 +133,7 @@
           </div>
 
           <select
+            disabled={order.printed}
             name="row"
             required
             value={order?.rowId}
@@ -160,6 +167,7 @@
           </div>
 
           <select
+            disabled={order.printed}
             name="table"
             required
             value={order?.tableId}
@@ -192,6 +200,7 @@
             <label for="name">Name</label>
           </div>
           <input
+            disabled={order.printed}
             type="text"
             id="name"
             name="name"
@@ -238,7 +247,7 @@
                       class="p-1 border rounded-full {menuCounter[i] > 0
                         ? 'hover:bg-gray-200'
                         : ''} transition-all duration-200"
-                      disabled={menuCounter[i] === 0}
+                      disabled={menuCounter[i] === 0 || order.printed}
                       type="button"
                       on:click={() => {
                         menuForm.requestSubmit();
@@ -277,6 +286,7 @@
                       on:click={() => {
                         increment(i, true);
                       }}
+                      disabled={order.printed}
                       type="button"
                       on:click={() => {
                         menuForm.requestSubmit();
@@ -337,7 +347,7 @@
                       class="p-1 border rounded-full {drinkCounter[i] > 0
                         ? 'hover:bg-gray-200'
                         : ''} transition-all duration-200"
-                      disabled={drinkCounter[i] === 0}
+                      disabled={drinkCounter[i] === 0 || order.printed}
                       type="button"
                       on:click={() => {
                         drinkForm.requestSubmit();
@@ -377,6 +387,7 @@
                         ? 'hover:bg-gray-200'
                         : ''} transition-all duration-200"
                       type="button"
+                      disabled={order.printed}
                       on:click={() => {
                         drinkForm.requestSubmit();
                       }}
@@ -420,6 +431,7 @@
       <div class="">
         <label for="comment" class="text-sm">Spezialwünsche</label>
         <textarea
+          disabled={order.printed}
           name="comment"
           class="w-full"
           bind:value={order.comment}

@@ -34,7 +34,6 @@
     }
     if (browser && selectedRowId) {
       localStorage.setItem("selectedRow", String(selectedRow.id));
-      console.log(selectedRow);
     }
   }
 
@@ -123,7 +122,7 @@
 <div class="text-xl relative">
   {#if !showOrder}
     <div
-      class="fixed top-15 right-2 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
+      class="fixed top-24 right-8 bg-tvblue text-white text-sm px-2 py-1 rounded-md"
     >
       <p>Total: CHF {totalAmount}</p>
     </div>

@@ -1,5 +1,5 @@
 export default function checkIfEditAllowed(order: Order) {
-  const twoMinutesAgo = new Date(Date.now() - 1 * 60 * 1000); // 1 minutes ago
+  const twoMinutesAgo = new Date(Date.now() - 20000); // 0.5 minutes ago -> minutes x 60 x 1000
 
   const createdOn = new Date(order.createdOn);
   let updatedOn = new Date(order.createdOn);

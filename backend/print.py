@@ -9,17 +9,23 @@ from ping3 import ping
 async def print_orders(prisma):
     try:
         # Ping the printer to check if it's reachable
-        response = ping("192.168.178.50", timeout=2)
+        response = ping("192.168.1.138", timeout=2)
         if response is None:
             raise Exception("Printer not reachable")
 
-        receipt = Network("192.168.178.50", profile='TM-T20II')
+        receipt = Network("192.168.1.138", profile='TM-T20II')
         # Check if the printer is available by sending a simple command
 
     except Exception as e:
         if not prisma.is_connected():
             await prisma.connect()
-        if not await prisma.error.find_first(where={"solved": False}):
+
+        existing_error = await prisma.error.find_first(
+            where={
+                "solved": False
+            }
+        )
+        if not existing_error:
             await prisma.error.create(
                 data={"message": "Drucker nicht gefunden"}
             )
@@ -34,15 +40,12 @@ async def print_orders(prisma):
         data={"solved": True}
     )
 
-    some_mintues_ago = datetime.utcnow() - timedelta(minutes=1.5)
+    some_mintues_ago = datetime.utcnow() - timedelta(milliseconds=30000)
 
     # Fetch orders where printed is false
     orders = await prisma.order.find_many(
         where={
             'printed': False,
-            "createdOn": {
-                'lt': some_mintues_ago.isoformat() + "Z"
-            },
             "updatedOn": {
                 'lt': some_mintues_ago.isoformat() + "Z"
             }

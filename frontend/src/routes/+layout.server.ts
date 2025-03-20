@@ -38,13 +38,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     const getUsers = async () => {
       const users = await prismaClient.user.findMany({
         orderBy: {
-          id: "asc",
-        },
-
-        where: {
-          NOT: {
-            username: "admin",
-          },
+          username: "desc",
         },
       });
       return users;

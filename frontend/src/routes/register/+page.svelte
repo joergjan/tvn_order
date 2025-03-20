@@ -21,7 +21,9 @@
   use:enhance={({}) => {
     loading = true;
     return async ({ result }) => {
-      messageComponent.showMessage(result);
+      if (result.type === "success") {
+        window.location.href = "/";
+      }
       loading = false;
     };
   }}

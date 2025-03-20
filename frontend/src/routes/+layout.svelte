@@ -64,7 +64,7 @@
     class="bg-white mx-auto max-w-7xl pt-2 pb-2 md:pb-0 px-4 sm:px-6 lg:px-8"
   >
     <div class="flex h-16 justify-between py-2">
-      <div class="flex flex-shrink-0 items-center">
+      <div class="flex flex-shrink-0 items-center justify-center">
         <a href="/" on:click={() => ($currentPage = 0)}>
           <img
             loading="lazy"
@@ -79,6 +79,7 @@
             alt="Turnverein Nussbaumen"
           />
         </a>
+        <p class="pt-4 pl-5">Hallo, {data.username}</p>
       </div>
       <div class="hidden md:ml-6 md:flex md:space-x-8">
         {#if data.username}
