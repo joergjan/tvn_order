@@ -101,6 +101,7 @@
   </div>
 
   <div
+    hidden={!order.printed}
     class="fixed top-32 right-8 bg-red-500 text-white text-sm px-2 py-1 rounded-md"
   >
     <p>bereits gedruckt</p>
