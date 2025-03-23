@@ -1,8 +1,15 @@
 import { prismaClient } from "$lib/server/db/prisma";
 import { Prisma } from "@prisma/client";
 import type { PageServerLoad } from "../$types";
+import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+  const session = await locals.auth.validate();
+
+  if (!session?.user.isAdmin) {
+    throw redirect(302, "/login");
+  }
+
   try {
     // Fetch the total amount of all ordered menus
     const totalMenuAmount: { total_earnings: number }[] =

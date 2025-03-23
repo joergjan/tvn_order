@@ -11,12 +11,12 @@
   export let data: PageData & { users: any };
   $: ({ rows, drinks, menus } = data);
 
-  let messageComponent;
+  let messageComponent: any;
   let loading = false;
   let order: Order;
   let showOrder = false;
   let tableId: number = 0;
-  let intervalId;
+  let intervalId: ReturnType<typeof setInterval>;
   let totalAmount: number = 0;
   let selectedRowId: number = 0;
   let selectedTableId: number = 0;
@@ -134,8 +134,8 @@
     use:enhance={({ formElement }) => {
       loading = true;
 
-      return async ({ result, update }) => {
-        selectedRowId = 0;
+      return async ({ result }) => {
+        const currentSelectedRowId = selectedRowId;
         order = await result.data.order;
         messageComponent.showMessage(result);
         formElement.reset();
@@ -146,6 +146,12 @@
         totalAmount = 0;
         showOrder = true;
         loading = false;
+
+        setTimeout(() => {
+          if (currentSelectedRowId) {
+            selectedRowId = currentSelectedRowId;
+          }
+        }, 20);
       };
     }}
   >
