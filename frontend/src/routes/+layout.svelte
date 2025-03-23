@@ -284,13 +284,15 @@
         aria-label="Footer"
       >
         {#each titles as title, i}
-          <div class="pb-6">
-            <a
-              href={title.href}
-              class="hover"
-              on:click={() => ($currentPage = i)}>{title.name}</a
-            >
-          </div>
+          {#if (data.isAdmin && title.admin) || !title.admin}
+            <div class="pb-6">
+              <a
+                href={title.href}
+                class="hover"
+                on:click={() => ($currentPage = i)}>{title.name}</a
+              >
+            </div>
+          {/if}
         {/each}
       </nav>
       <!--
