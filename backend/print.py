@@ -98,7 +98,7 @@ async def print_orders(prisma):
                 for menuOrder in order.orderedMenus.menuOrder:
                     if menuOrder.amount > 0:
                         receipt.text(f"{menuOrder.amount} x ")
-                        receipt.text(f"{menuOrder.menu.alias}")
+                        receipt.text(f"{menuOrder.menu.name}")
                         receipt.text(f" à CHF {menuOrder.menu.price}")
                         if menuOrder.amount > 1:
                             receipt.text(
