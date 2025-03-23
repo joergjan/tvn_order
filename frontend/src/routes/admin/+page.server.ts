@@ -327,6 +327,7 @@ export const actions: Actions = {
     try {
       const menu = await prismaClient.menu.create({
         data: {
+          alias: (formData.alias as string) || "",
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },
@@ -353,6 +354,7 @@ export const actions: Actions = {
       const menu = await prismaClient.menu.update({
         where: { id: Number(formData.id) },
         data: {
+          alias: (formData.alias as string) || "",
           name: (formData.name as string) || "",
           price: Number(formData.price),
         },

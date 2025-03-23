@@ -194,6 +194,7 @@
         <input type="text" id="name" name="name" placeholder="(optional)" />
       </div>
     </div>
+
     <div class="grid md:grid-cols-2">
       <div class="mt-8">
         <h3>Menus</h3>
@@ -203,7 +204,9 @@
             <li class="flex space-x-3 justify-between md:justify-normal">
               <input type="number" name="id" bind:value={menu.id} hidden />
               <div class="flex">
-                <p class="w-32 place-content-center">{menu.name}</p>
+                <p class="w-40 place-content-center break-words">
+                  {menu.alias}
+                </p>
                 <p class="w-10 place-content-center">{menu.price}</p>
               </div>
 

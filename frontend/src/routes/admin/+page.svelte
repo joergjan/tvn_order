@@ -99,9 +99,14 @@
       }}
     >
       <div class="block">
-        <label for="name">Neues Menu</label>
+        <label for="name">Menu Name</label>
 
         <input type="text" name="name" id="name" autocomplete="off" />
+      </div>
+      <div class="block">
+        <label for="alias">Alias</label>
+
+        <input type="text" name="alias" id="alias" autocomplete="off" />
       </div>
       <div class="block">
         <label for="price">Preis</label>
@@ -160,6 +165,18 @@
                 name="name"
                 autocomplete="off"
                 id="name"
+                on:change={() => updateMenuForm[i].requestSubmit()}
+              />
+            </div>
+            <div class="block">
+              <label for="alias">Alias</label>
+
+              <input
+                type="text"
+                bind:value={menu.alias}
+                name="alias"
+                autocomplete="off"
+                id="alias"
                 on:change={() => updateMenuForm[i].requestSubmit()}
               />
             </div>

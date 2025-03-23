@@ -80,7 +80,7 @@
             {#if menuOrder.amount > 0}
               <div class="flex justify-between text-xl font-medium">
                 <p>
-                  {menuOrder.menu.name} x {menuOrder.amount}
+                  {menuOrder.menu.alias} x {menuOrder.amount}
                 </p>
                 <p>
                   {(menuOrder.amount * menuOrder.menu.price).toFixed(2)}

@@ -43,6 +43,7 @@ model Order {
 model Menu {
   id    Int         @id @default(autoincrement())
   name  String
+  alias String
   price Float
   order MenuOrder[]
 }
