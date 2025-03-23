@@ -195,7 +195,7 @@
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2">
+    <div class="grid md:grid-cols-2 gap-5">
       <div class="mt-8">
         <h3>Menus</h3>
 
