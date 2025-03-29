@@ -12,40 +12,47 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   try {
     // Fetch the total amount of all ordered menus
-    const totalMenuAmount: { total_earnings: number }[] =
-      await prismaClient.$queryRaw(
-        Prisma.sql`SELECT SUM(mo.amount * m.price) AS total_earnings FROM MenuOrder mo JOIN Menu m ON mo.menuId = m.id`
-      );
+    const menuEarningsByType: {
+      menu_name: string;
+      total_earnings: number;
+      total_sold: number;
+    }[] = await prismaClient.$queryRaw(
+      Prisma.sql`SELECT m.name AS menu_name, 
+                         SUM(mo.amount * m.price) AS total_earnings, 
+                         SUM(mo.amount) AS total_sold
+                  FROM MenuOrder mo 
+                  JOIN Menu m ON mo.menuId = m.id 
+                  GROUP BY m.id`
+    );
 
-    const totalDrinkAmount: { total_earnings: number }[] =
-      await prismaClient.$queryRaw(
-        Prisma.sql`SELECT SUM(do.amount * d.price) AS total_earnings FROM DrinkOrder do JOIN Drink d ON do.drinkId = d.id`
-      );
+    const drinkEarningsByType: {
+      drink_name: string;
+      total_earnings: number;
+      total_sold: number;
+    }[] = await prismaClient.$queryRaw(
+      Prisma.sql`SELECT d.name AS drink_name, SUM(do.amount * d.price) AS total_earnings,
+       SUM(do.amount) AS total_sold 
+                 FROM DrinkOrder do 
+                 JOIN Drink d ON do.drinkId = d.id 
+                 GROUP BY d.id`
+    );
 
-    const totalAmount =
-      totalDrinkAmount[0].total_earnings + totalMenuAmount[0].total_earnings;
+    const totalMenuEarnings = menuEarningsByType.reduce(
+      (sum, menu) => sum + menu.total_earnings,
+      0
+    );
 
-    const ordersAmount = await prismaClient.order.count();
+    const totalDrinkEarnings = drinkEarningsByType.reduce(
+      (sum, drink) => sum + drink.total_earnings,
+      0
+    );
 
-    const drinkOrdersAmount = await prismaClient.drinkOrder.aggregate({
-      _sum: {
-        amount: true,
-      },
-    });
-
-    const menuOrdersAmount = await prismaClient.menuOrder.aggregate({
-      _sum: {
-        amount: true,
-      },
-    });
+    const totalAmount = totalMenuEarnings + totalDrinkEarnings;
 
     return {
-      totalMenuAmount: totalMenuAmount[0].total_earnings,
-      totalDrinkAmount: totalDrinkAmount[0].total_earnings,
+      menuEarningsByType: menuEarningsByType,
+      drinkEarningsByType: drinkEarningsByType,
       totalAmount,
-      ordersAmount,
-      drinkOrdersAmount: drinkOrdersAmount._sum.amount,
-      menuOrdersAmount: menuOrdersAmount._sum.amount,
     };
   } catch (err) {
     console.error("Error fetching total amounts:", err);

@@ -4,36 +4,58 @@
 
 <h2>Umsatz</h2>
 
-<div class="m-2"></div>
-<div class="grid grid-cols-2 max-w-md">
-  <p>Anzahl Bestellte Getränke:</p>
-  <p class="text-end">{data.drinkOrdersAmount}</p>
-  <p>Getränke:</p>
-  <p class="text-end">
-    {Intl.NumberFormat("de-CH", {
-      style: "currency",
-      currency: "CHF",
-    }).format(data.totalDrinkAmount)}
-  </p>
+<div class="max-w-md">
+  <h4>Menus</h4>
+  <ul class="">
+    <li class="grid grid-cols-3">
+      <p>Menu</p>
+      <p class="text-right">Anzzahl</p>
+      <p class="text-right">Umsatz</p>
+    </li>
+    {#each data.menuEarningsByType as menuEarnings}
+      <li class="grid grid-cols-3">
+        <p>{menuEarnings.menu_name}</p>
+        <p class="text-right">{menuEarnings.total_sold}</p>
+        <p class="text-end">
+          {Intl.NumberFormat("de-CH", {
+            style: "currency",
+            currency: "CHF",
+          }).format(menuEarnings.total_earnings)}
+        </p>
+      </li>
+    {/each}
+  </ul>
 
-  <p>Anzahl Bestellte Menus:</p>
-  <p class="text-end">{data.menuOrdersAmount}</p>
-  <p>Menus:</p>
-  <p class="text-end">
-    {Intl.NumberFormat("de-CH", {
-      style: "currency",
-      currency: "CHF",
-    }).format(data.totalMenuAmount)}
-  </p>
+  <br />
 
-  <p>Total Bestellungen:</p>
-  <p class="text-end">{data.ordersAmount}</p>
+  <h4>Getränke</h4>
+  <ul class="">
+    <li class="grid grid-cols-3">
+      <p>Menu</p>
+      <p class="text-right">Anzzahl</p>
+      <p class="text-right">Umsatz</p>
+    </li>
+    {#each data.drinkEarningsByType as drinkEarnings}
+      <li class="grid grid-cols-3">
+        <p>{drinkEarnings.drink_name}</p>
+        <p class="text-right">{drinkEarnings.total_sold}</p>
+        <p class="text-end">
+          {Intl.NumberFormat("de-CH", {
+            style: "currency",
+            currency: "CHF",
+          }).format(drinkEarnings.total_earnings)}
+        </p>
+      </li>
+    {/each}
+  </ul>
 
-  <p class="text-lg font-bold">Total:</p>
-  <p class="text-lg font-bold text-end">
-    {Intl.NumberFormat("de-CH", {
-      style: "currency",
-      currency: "CHF",
-    }).format(data.totalAmount)}
-  </p>
+  <div class="grid grid-cols-2 mt-5">
+    <p class="text-lg font-bold">Umsatz</p>
+    <p class="text-lg font-bold text-end">
+      {Intl.NumberFormat("de-CH", {
+        style: "currency",
+        currency: "CHF",
+      }).format(data.totalAmount)}
+    </p>
+  </div>
 </div>
