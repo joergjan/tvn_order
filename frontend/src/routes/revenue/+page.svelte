@@ -9,7 +9,7 @@
   <ul class="">
     <li class="grid grid-cols-3">
       <p>Menu</p>
-      <p class="text-right">Anzzahl</p>
+      <p class="text-right">Anzahl</p>
       <p class="text-right">Umsatz</p>
     </li>
     {#each data.menuEarningsByType as menuEarnings}
@@ -32,7 +32,7 @@
   <ul class="">
     <li class="grid grid-cols-3">
       <p>Menu</p>
-      <p class="text-right">Anzzahl</p>
+      <p class="text-right">Anzahl</p>
       <p class="text-right">Umsatz</p>
     </li>
     {#each data.drinkEarningsByType as drinkEarnings}
